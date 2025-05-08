@@ -8,8 +8,9 @@ import (
 	"os"
 	"path/filepath"
 
-	_ "github.com/lib/pq"
 	"public-service/config" // 👈 import your config package
+
+	_ "github.com/lib/pq"
 )
 
 func RunMigrations() {
@@ -19,11 +20,10 @@ func RunMigrations() {
 	dbUser := config.GetEnv("DB_USER")
 	dbPassword := config.GetEnv("DB_PASSWORD")
 	dbHost := config.GetEnv("DB_HOST")
-	dbPort := config.GetEnv("DB_PORT")
 	dbName := config.GetEnv("DB_NAME")
 
 	// Build the database URL
-	dbURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", dbUser, dbPassword, dbHost, dbPort, dbName)
+	dbURL := fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", dbUser, dbPassword, dbHost, dbName)
 
 	// Connect to database
 	db, err := sql.Open("postgres", dbURL)
