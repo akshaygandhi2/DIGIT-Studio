@@ -24,17 +24,18 @@ func InitDB() *sql.DB {
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
 	dbname := os.Getenv("DB_NAME")
 
-	if user == "" || password == "" || host == "" || port == "" || dbname == "" {
+	if user == "" || password == "" || host == "" || dbname == "" {
 		log.Fatal("Database environment variables are not set properly")
 	}
 
 	connStr := fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=require&connect_timeout=10",
-		user, password, host, port, dbname,
+		"postgres://%s:%s@%s/%s?sslmode=disable&connect_timeout=10",
+		user, password, host, dbname,
 	)
+
+	log.Println("Connecting to DB with: ", connStr)
 
 	// Force IPv4 resolution
 	net.DefaultResolver.PreferGo = true
