@@ -95,6 +95,7 @@
                   "name": "siteLocation",
                   "label": "Site Location",
                   "type": "string",
+                  "format": "text",
                   "minLength": 2,
                   "maxLength": 500,
                   "required": true
