@@ -167,9 +167,9 @@ const DigitDemoComponent = () => {
     setShowToast(false);
   };
 
-  if (moduleListLoading) {
-    return <Loader />;
-  }
+  // if (moduleListLoading) {
+  //   return <Loader />;
+  // }
 
   return (
     <React.Fragment>
