@@ -6,7 +6,9 @@
     "example",
     "packages/css",
     "packages/modules/*",
-    "packages/ui-components"
+    "packages/ui-components",
+    "packages/modules/core"
+
   ],
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
   "license": "MIT",
