@@ -137,7 +137,7 @@ export const ApplicantFields =  [{
           "label": "Preferred Way to Address",
           "format": "radioordropdown",
           "schema": "common-masters.GenderType",
-          "required": false,
+          "required": true,
           "reference": "mdms"
         },
         {
@@ -145,7 +145,7 @@ export const ApplicantFields =  [{
           "type": "string",
           "label": "Legal Name",
           "format": "text",
-          "required": false,
+          "required": true,
           "maxLength": 256,
           "minLength": 2
         },
@@ -154,7 +154,7 @@ export const ApplicantFields =  [{
           "type": "string",
           "label": "Address",
           "format": "text",
-          "required": false,
+          "required": true,
           "maxLength": 500,
           "minLength": 2
         },
@@ -163,7 +163,7 @@ export const ApplicantFields =  [{
           "type": "string",
           "label": "National Identification Number (CIN)",
           "format": "number",
-          "required": false,
+          "required": true,
           "maxLength": 8,
           "minLength": 6
         },
@@ -171,8 +171,8 @@ export const ApplicantFields =  [{
           "name": "Telephone",
           "type": "string",
           "label": "Telephone",
-          "format": "text",
-          "required": false,
+          "format": "mobileNumber",
+          "required": true,
           "validation": {
             "regex": "(^$|^77[0-9]{6}$)",
             "message": "Only valid contact number is allowed"
@@ -192,7 +192,7 @@ export const ApplicantFields =  [{
           "label": "I, the undersigned, author of the request, certify that the information provided is correct",
           "format": "checkbox",
           "withoutLabel": true,
-          "required": false
+          "required": true
         },
         {
           "name": "taxCalculationAgreement",
@@ -200,7 +200,7 @@ export const ApplicantFields =  [{
           "label": "I am aware that the information contained in this application will be used to calculate the taxes stipulated in the French Planning Code.",
           "format": "checkbox",
           "withoutLabel": true,
-          "required": false
+          "required": true
         },
         {
           "name": "taxCalculationAgreement",
@@ -208,7 +208,7 @@ export const ApplicantFields =  [{
           "label": "I am aware that the information contained in this application will be used to calculate the taxes stipulated in the French Planning Code.",
           "format": "checkbox",
           "withoutLabel": true,
-          "required": false
+          "required": true
         }
       ]
     }

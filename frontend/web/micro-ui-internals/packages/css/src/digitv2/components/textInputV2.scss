@@ -87,6 +87,8 @@
 
     .digit-numeric-button-prefix,
     .digit-prefix {
+      border: 1px solid #D4D4D4 !important;
+      border-radius: 8px 0 0px 8px;
       border-right-style: hidden;
     }
 
@@ -152,6 +154,8 @@
 
     .digit-numeric-button-prefix,
     .digit-prefix {
+      border: 1px solid #D4D4D4 !important;
+      border-radius: 8px 0 0px 8px;
       border-right-style: hidden;
     }
 
@@ -180,6 +184,7 @@
     .digit-numeric-button-prefix,
     .digit-prefix {
       border-right: 0.063rem solid theme(digitv2.lightTheme.text-secondary);
+      border-right-style: hidden !important;
     }
 
     .digit-numeric-button-suffix,
@@ -410,6 +415,7 @@
   .digit-numeric-button-prefix,
   .digit-prefix {
     border-right: 0.063rem solid theme(digitv2.lightTheme.text-secondary) !important;
+    border-right-style: hidden !important;
   }
 
   .digit-numeric-button-suffix,
@@ -443,6 +449,8 @@
 
 .digit-prefix,
 .digit-numeric-button-prefix {
+  border: 1px solid #D4D4D4 !important;
+  border-radius: 8px 0 0px 8px;
   border-right-style: hidden;
 }
 
@@ -465,4 +473,9 @@
   &.disabled {
     @apply pointer-events-none;
   }
+}
+
+.half-rounded{
+  border-radius: 0 8px 8px 0 !important;
+  border-left-style: hidden !important;
 }
