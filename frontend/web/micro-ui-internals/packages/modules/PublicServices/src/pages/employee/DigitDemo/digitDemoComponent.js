@@ -35,7 +35,7 @@ const DigitDemoComponent = () => {
 
   let config = data?.mdms?.filter((item) => item?.uniqueIdentifier.toLowerCase() === `${module}.${service}`.toLowerCase())[0];
 
-  // let config = serviceConfigPGR;
+  // let config = serviceConfig;
 
   let Updatedconfig = {
     ServiceConfiguration : [config?.data],
