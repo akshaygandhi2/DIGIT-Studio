@@ -90,7 +90,7 @@ import { useQuery, useQueryClient } from "react-query";
     });
   
     return documents;
-  };  
+  };
 
   export const transformToApplicationPayload = (formData, configMap, service, tenantId) => {
     const currentConfig = configMap?.ServiceConfiguration?.find(ob => ob?.service === service);
@@ -99,10 +99,10 @@ import { useQuery, useQueryClient } from "react-query";
   
     const applicants = formData.applicantDetails?.filter(Boolean)?.map((applicant, index) => ({
       type: "CITIZEN",
-      name: applicant?.OwnerName,
-      mobileNumber: Number(applicant?.mobileNumber),
+      name: applicant?.legalName,
+      mobileNumber: Number(applicant?.Telephone),
       emailId: applicant?.email || `user${index + 1}@example.com`,
-      prefix: "91",
+      prefix: "253",
       active: true,
     })) || [];
   
