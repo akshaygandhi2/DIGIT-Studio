@@ -40,7 +40,7 @@ const UploadAndDownloadDocumentHandler = ({
                 "moduleName": "DigitStudio",
                 "masterDetails": [
                     {
-                        "name": "DocumentConfig2"
+                        "name": "DocumentConfig"
                     }
                 ]
             }
@@ -52,9 +52,10 @@ const UploadAndDownloadDocumentHandler = ({
 
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
-let docData = data ? data?.MdmsRes?.DigitStudio?.DocumentConfig2?.filter((ob) => ob?.module.toLowerCase() === moduleName)?.[0]?.actions : [];
+let docConfig = data ? data?.MdmsRes?.DigitStudio?.DocumentConfig?.filter((ob) => ob?.module.toLowerCase() === moduleName)?.[0] : [];
 
-const docConfig = docData?.filter((item) => item?.action === "APPLY")?.[0];
+// const docConfig = docData?.filter((item) => item?.active === true)?.[0];
+
   if (!docConfig && flow !== "WORKFLOW") return null;
   if(isLoading) return <Loader />;
   return (
