@@ -202,7 +202,13 @@ const TextInput = (props) => {
   }  ${props.type === "numeric" ? "numeric" : ""}`;
 
   const inputClassName = `${
-    user_type ? "digit-employeeCard-input" : "digit-citizenCard-input"
+    user_type
+  ? `digit-employeeCard-input ${
+      props?.populators?.prefix
+        ? 'half-rounded'
+        : ''
+    }`
+  : 'digit-citizenCard-input'
   } ${props.disabled ? "disabled" : ""} focus-visible ${
     props.errorStyle ? "digit-employeeCard-inputError" : ""
   } ${props.nonEditable ? "noneditable" : ""} ${
