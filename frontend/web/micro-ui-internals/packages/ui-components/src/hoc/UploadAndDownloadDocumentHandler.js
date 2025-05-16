@@ -139,9 +139,10 @@ const UploadAndDownloadDocumentHandler = ({
   };
   
 
-  let docData = data ? data?.MdmsRes?.DigitStudio?.DocumentConfig2?.filter((ob) => ob?.module.toLowerCase() === moduleName)?.[0]?.actions : [];
+  let docData = data ? data?.MdmsRes?.DigitStudio?.DocumentConfig?.filter((ob) => ob?.module.toLowerCase() === moduleName)?.[0]?.actions : [];
 
   const docConfig = docData?.filter((item) => item?.action === "APPLY")?.[0];
+
   const updatedDocuments = docConfig?.documents?.flatMap((doc) => {
     if (doc.templatePDFKey || doc.templatedownloadURL) {
       // Return both original and a modified copy with cleared template keys
@@ -156,9 +157,10 @@ const UploadAndDownloadDocumentHandler = ({
     }
     return [doc]; // Just the original if no keys present
   });
-  if (!docConfig && flow !== "WORKFLOW") return null;
+  // if (!docConfig && flow !== "WORKFLOW") return null;
   // if(isLoading) return <Loader />;
   return (
+    (isLoading && !docConfig && flow !== "WORKFLOW") ? <Loader /> :
     <React.Fragment>
       {/* <HeaderComponent styles={{ fontSize: "24px", marginTop: "40px" }}>
         {t("WORKS_RELEVANT_DOCUMENTS")}
