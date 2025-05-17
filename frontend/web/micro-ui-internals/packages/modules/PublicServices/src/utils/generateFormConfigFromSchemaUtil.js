@@ -26,6 +26,7 @@ export const generateFormConfig = (config, module, service) => {
         reference: field.reference,
         dependencies: field.dependencies,
         label:field.label,
+        placeholder:field.placeholder,
         ...(field?.schema
           ? {
               mdmsConfig: {
