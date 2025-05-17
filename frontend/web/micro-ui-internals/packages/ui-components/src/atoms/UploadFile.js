@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import Chip from "./Chip";
 import ErrorMessage from "./ErrorMessage";
 import { getUserType } from "../utils/digitUtils";
+import TextInput from "./TextInput";
 
 const getRandomId = () => {
   return Math.floor((Math.random() || 1) * 139);
@@ -47,38 +48,32 @@ const UploadFile = (props) => {
   const showHint = props?.showHint || false;
 
   return (
-    <Fragment>
-      {showHint && <p className="digit-cell-text">{t(props?.hintText)}</p>}
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      {/* {showHint && <p className="digit-cell-text">{t(props?.hintText)}</p>} */}
+      <div style={{ display: "flex", gap: "12px" }}>
+        <div style={{ height: "100%", width: "100%", maxWidth: "450px" }}>
+          <TextInput
+            type="text"
+            value={`${props?.uploadedFiles?.length} files uploaded`}
+            name="file"
+            disabled={true}
+          />
+        </div>
       <div
         className={`digit-upload-file ${props?.customClass ? props?.customClass : ""} ${
           user_type === "employee" ? "" : "digit-upload-file-max-width"
         } ${props.disabled ? " disabled" : ""}`}
         style={props?.style}
       >
-        <div className="digit-upload-file-button-wrap">
           <ButtonSelector
             theme="border"
-            label={t("CS_COMMON_CHOOSE_FILE")}
+            label={t("CS_COMMON_UPLOAD_FILE")}
             style={{ ...(props?.extraStyles ? props?.extraStyles?.buttonStyles : {}), ...(!props?.enableButton ? { opacity: 0.5 } : {}) }}
             textStyles={props?.textStyles}
             type={props.buttonType}
+            className="upload-button"
           />
-          {props?.uploadedFiles?.map((file, index) => {
-            const fileDetailsData = file[1];
-            return (
-              <div className="digit-tag-container">
-                <Chip
-                  key={index}
-                  hideClose={false}
-                  text={file[0].length > 64 ? `${file[0].slice(0, 64)} ...` : file[0]}
-                  onClick={(e) => props?.removeTargetedFile(fileDetailsData, e)}
-                />
-              </div>
-            );
-          })}
-          {props?.uploadedFiles.length === 0 && <h2 className="digit-file-upload-status">{props.message}</h2>}
-        </div>
-        <input
+           <input
           className={props.disabled ? "disabled" : "" + "digit-input-mirror-selector-button"}
           ref={inpRef}
           type="file"
@@ -97,10 +92,30 @@ const UploadFile = (props) => {
             }
           }}
         />
+
+        </div>
       </div>
+      <div className="digit-upload-file-button-wrap">
+        <div className="digit-tag-container-wrapper">
+          {props?.uploadedFiles?.map((file, index) => {
+            const fileDetailsData = file[1];
+            return (
+              <div className="digit-tag-container">
+                <Chip
+                  key={index}
+                  hideClose={false}
+                  text={file[0].length > 64 ? `${file[0].slice(0, 64)} ...` : file[0]}
+                  onClick={(e) => props?.removeTargetedFile(fileDetailsData, e)}
+                />
+              </div>
+            );
+          })}
+        </div>
+        {/* {props?.uploadedFiles.length === 0 && <h2 className="digit-file-upload-status">{props.message}</h2>} */}
+        </div>
       {props.iserror && <ErrorMessage message={props.iserror} />}
       {props?.showHintBelow && <p className="digit-cell-text">{t(props?.hintText)}</p>}
-    </Fragment>
+    </div>
   );
 };
 UploadFile.propTypes = {

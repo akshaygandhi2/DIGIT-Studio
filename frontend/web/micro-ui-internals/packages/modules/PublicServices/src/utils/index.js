@@ -301,7 +301,7 @@ import cloneDeep from "lodash/cloneDeep";
             type: "DOCUMENTS",
             documents: [
               {
-                title: `${application?.module.toUpperCase()}_${application?.businessService.toUpperCase()}_DOCUMENTS`, // or any module-specific label
+                title: `${application?.module.toUpperCase()}_${application?.businessService.toUpperCase()}_DOC`, // or any module-specific label
                 BS: application.module || "Module",
                 values: flattenedDocuments,
               },
