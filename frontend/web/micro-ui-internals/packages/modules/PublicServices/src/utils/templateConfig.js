@@ -176,7 +176,8 @@ export const ApplicantFields =  [{
           "validation": {
             "regex": "(^$|^77[0-9]{6}$)",
             "message": "Only valid contact number is allowed"
-          }
+          },
+          "placeholder":"00 00 00 00"
         },
         {
           "name": "eligibilityDeclaration",
@@ -184,7 +185,7 @@ export const ApplicantFields =  [{
           "label": "I certify I am entitled to request this authorization",
           "format": "checkbox",
           "withoutLabel": true,
-          "required": false
+          "required": true
         },
         {
           "name": "accuracyDeclaration",
@@ -203,9 +204,9 @@ export const ApplicantFields =  [{
           "required": true
         },
         {
-          "name": "taxCalculationAgreement",
+          "name": "informationDeclaration",
           "type": "string",
-          "label": "I am aware that the information contained in this application will be used to calculate the taxes stipulated in the French Planning Code.",
+          "label": "I am aware that the information contained in this application will be correct",
           "format": "checkbox",
           "withoutLabel": true,
           "required": true

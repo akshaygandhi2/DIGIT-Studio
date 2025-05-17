@@ -148,6 +148,12 @@ const DigitDemoComponent = () => {
     }
   };
 
+  const onPrevious = async () => {
+    if(currentStep > 1){
+    setCurrentStep((prev) => prev - 1);
+    }
+  }
+
   const onStepperClick = (stepIndex) => {
     const clickedStepIndex = stepIndex + 1;
     const clickedHead = rawConfig[stepIndex].name;
@@ -200,7 +206,9 @@ const DigitDemoComponent = () => {
             : { ...(formData[currentFormConfig?.name || `section_${currentStep}`] || {}) }
         }
         onSubmit={onSubmit}
+        onPrevious={onPrevious}
         fieldStyle={{ marginRight: 0 }}
+        currentStep={currentStep}
         onFormValueChange={onFormValueChange}
       />
       {showToast && (
