@@ -324,9 +324,19 @@ export const FormComposer = (props) => {
   );
 
   const getCardStyles = (shouldDisplay = true) => {
-    let styles = props.cardStyle || {};
-    if (props.noBoxShadow) styles = { ...styles, boxShadow: "none" };
-    if (!shouldDisplay) styles = { ...styles, display: "none" };
+    let styles = {
+      ...(props.cardStyle || {}),
+      padding: "24px"
+    };
+  
+    if (props.noBoxShadow) {
+      styles = { ...styles, boxShadow: "none" };
+    }
+  
+    if (!shouldDisplay) {
+      styles = { ...styles, display: "none" };
+    }
+  
     return styles;
   };
 
@@ -397,8 +407,15 @@ export const FormComposer = (props) => {
             </>;
           })}
           {!props.submitInForm && props.label && (
-        <Footer className={"footer-in-form"}>
+        <Footer className={"footer-in-form"} style={{justifyContent: "flex-end"}}>
+          <div className="footer-buttons-wrapper">
+
+          <button type="button" 
+          className={`digit-submit-bar previous-btn ${props.currentStep < 2 ? "disabled" : ''}`}
+          onClick={(e) => { e.preventDefault(); props.onPrevious(); }}>Previous</button>
+
           <SubmitBar label={t(props.label)} className="digit-formcomposer-submitbar" submit="submit" disabled={isDisabled} />
+          </div>
           {props.onSkip && props.showSkip && <ActionLinks style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)} onClick={props.onSkip} />}
         </Footer>
       )}
