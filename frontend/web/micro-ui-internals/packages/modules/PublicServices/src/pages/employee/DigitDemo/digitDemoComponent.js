@@ -116,7 +116,7 @@ const DigitDemoComponent = () => {
               pathname: `/${window.contextPath}/employee/publicservices/${module}/${service}/response`,
               search: "?isSuccess=true",
               state: {
-                message: "Application Created Successfully",
+                message: "COMMON_APPLICATION_CREATED",
                 showID: true,
                 applicationNumber: data?.Application?.applicationNumber,
                 redirectionUrl: `/${window.contextPath}/employee/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
@@ -128,7 +128,7 @@ const DigitDemoComponent = () => {
               pathname: `/${window.contextPath}/employee/publicservices/${module}/response`,
               search: "?isSuccess=false",
               state: {
-                message: "Application Creation Failed",
+                message: "COMMON_APPLICATION_FAILED",
                 showID: false,
               },
             });
