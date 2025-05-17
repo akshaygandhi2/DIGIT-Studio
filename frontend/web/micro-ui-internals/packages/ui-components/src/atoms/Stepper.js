@@ -87,10 +87,10 @@ const Stepper = ({
           className={`digit-stepper-checkpoint ${direction ? direction : ""}`}
           style={{ cursor: "pointer" }}
           key={index}
-          onClick={() => {
-            currentStep = index;
-            onStepClick(index);
-          }}
+          // onClick={() => {
+          //   currentStep = index;
+          //   onStepClick(index);
+          // }}
         >
           <div
             className={`digit-stepper-content ${direction ? direction : ""}`}
