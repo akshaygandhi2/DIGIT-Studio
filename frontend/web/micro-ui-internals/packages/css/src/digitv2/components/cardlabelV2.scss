@@ -6,5 +6,7 @@
   line-height: 19px;
   font-family: "Inter";
   margin-bottom: -10px;
-  color: theme(digitv2.lightTheme.text-primary);
+  color: theme(digitv2.lightTheme.text-color-primary);
+  margin: 0 !important;
+  word-break: break-word;
 }

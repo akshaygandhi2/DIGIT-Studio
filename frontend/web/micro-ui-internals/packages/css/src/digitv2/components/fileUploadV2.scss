@@ -709,3 +709,21 @@
   }
 
 }
+
+.digit-upload-file {
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: theme(digitv2.spacers.spacer2);
+  align-items: center;
+  justify-content: center;
+  width: fit-content !important;
+  justify-content: flex-start !important;
+  height: 40px !important;
+
+  input {
+    height: 40px !important;
+  }
+}
