@@ -1,18 +1,18 @@
 export const loginSteps = [
   {
     texts: {
-      header: "CS_LOGIN_PROVIDE_MOBILE_NUMBER",
+      header: "CORE_COMMON_LOGIN",
       cardText: "",
       nextText: "CS_COMMONS_NEXT",
-      submitBarLabel: "Login",
-      submitBarLabel2: "Login as Employee",
+      submitBarLabel: "CORE_COMMON_LOGIN",
+      submitBarLabel2: "CS_COMMONS_LOGIN_AS_EMPLOYEE",
     },
     inputs: [
       {
         label: "CORE_COMMON_MOBILE_NUMBER",
         type: "text",
         name: "mobileNumber",
-        error: "Enter a valid mobile number",
+        error: "CORE_COMMON_MOBILE_NUMBER_VALIDMSG",
         validation: {
           required: true,
           minLength: 8,
@@ -26,7 +26,7 @@ export const loginSteps = [
       header: "CS_LOGIN_OTP",
       cardText: "CS_LOGIN_OTP_TEXT",
       nextText: "CS_COMMONS_NEXT",
-      submitBarLabel: "Verify",
+      submitBarLabel: "CS_COMMONS_VERIFY",
     },
   },
   {
