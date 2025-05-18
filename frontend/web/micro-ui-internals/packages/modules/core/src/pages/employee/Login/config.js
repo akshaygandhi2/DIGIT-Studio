@@ -2,16 +2,24 @@ export const loginConfig = [
   {
     texts: {
       header: "CORE_COMMON_LOGIN",
-      submitButtonLabel: "CORE_COMMON_CONTINUE",
+      submitBarLabel: "CORE_COMMON_LOGIN",
       secondaryButtonLabel: "CORE_COMMON_FORGOT_PASSWORD",
+      submitBarLabel2: "CS_COMMONS_LOGIN_AS_CITIZEN",
     },
     inputs: [
       {
-        label: "CORE_LOGIN_USERNAME",
+        label: "CORE_LOGIN_EMAIL",
         type: "text",
         populators: {
           name: "username",
         },
+        name: "username",
+        error: "Please enter a valid email address (example: user@domain.com)",
+        validation: {
+          required: true,
+          title: "Please enter a valid email address (example: user@domain.com)",
+        },
+
         isMandatory: true,
       },
       {

@@ -36,6 +36,30 @@ const EmployeeApp = ({
   const location = useLocation();
   const showLanguageChange = location?.pathname?.includes("language-selection");
   const isUserProfile = userScreensExempted.some((url) => location?.pathname?.includes(url));
+
+  // Fetch link data for the TopBarSideBar
+  const { isLoading: islinkDataLoading, data: linkData, isFetched: isLinkDataFetched } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "ACCESSCONTROL-ACTIONS-TEST",
+    [
+      {
+        name: "actions-test",
+        filter: `[?(@.url == '${window.contextPath}-card')]`,
+      },
+    ],
+    {
+      select: (data) => {
+        const formattedData = data?.["ACCESSCONTROL-ACTIONS-TEST"]?.["actions-test"]
+          ?.filter((el) => el.enabled === true)
+          .reduce((a, b) => {
+            a[b.parentModule] = a[b.parentModule]?.length > 0 ? [b, ...a[b.parentModule]] : [b];
+            return a;
+          }, {});
+        return formattedData;
+      },
+    }
+  );
+
   useEffect(() => {
     Digit.UserService.setType("employee");
   }, []);
@@ -44,26 +68,26 @@ const EmployeeApp = ({
     <div className="employee">
       <Switch>
         <Route path={`${path}/user`}>
-          {isUserProfile && (
-            <TopBarSideBar
-              t={t}
-              stateInfo={stateInfo}
-              userDetails={userDetails}
-              CITIZEN={CITIZEN}
-              cityDetails={cityDetails}
-              mobileView={mobileView}
-              handleUserDropdownSelection={handleUserDropdownSelection}
-              logoUrl={logoUrl}
-              showSidebar={isUserProfile ? true : false}
-              showLanguageChange={!showLanguageChange}
-            />
-          )}
+          <TopBarSideBar
+            t={t}
+            stateInfo={stateInfo}
+            userDetails={userDetails}
+            CITIZEN={CITIZEN}
+            cityDetails={cityDetails}
+            mobileView={mobileView}
+            handleUserDropdownSelection={handleUserDropdownSelection}
+            logoUrl={logoUrl}
+            showSidebar={isUserProfile ? true : false}
+            showLanguageChange={!showLanguageChange}
+            linkData={linkData}
+            islinkDataLoading={islinkDataLoading}
+          />
           <div
             className={isUserProfile ? "grounded-container" : "loginContainer"}
             style={
               isUserProfile
                 ? { padding: 0, paddingTop: "80px", marginLeft: mobileView ? "" : "64px" }
-                : { "--banner-url": `url(${stateInfo?.bannerUrl})`, padding: "0px" }
+                : { "--banner-url": `url(${stateInfo?.bannerUrl})`, padding: "0px"}
             }
           >
             <Switch>
@@ -91,7 +115,7 @@ const EmployeeApp = ({
                 <LanguageSelection />
               </Route>
               <Route>
-                <Redirect to={`${path}/user/language-selection`} />
+                <Redirect to={`${path}/login`} />
               </Route>
             </Switch>
           </div>
@@ -107,6 +131,8 @@ const EmployeeApp = ({
             handleUserDropdownSelection={handleUserDropdownSelection}
             logoUrl={logoUrl}
             modules={modules}
+            linkData={linkData}
+            islinkDataLoading={islinkDataLoading}
           />
           <div className={`main ${DSO ? "m-auto" : ""}`}>
             <div className="employee-app-wrapper">
@@ -127,7 +153,7 @@ const EmployeeApp = ({
           </div>
         </Route>
         <Route>
-          <Redirect to={`${path}/user/language-selection`} />
+          <Redirect to={`${path}/login`} />
         </Route>
       </Switch>
     </div>

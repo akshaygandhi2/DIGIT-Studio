@@ -24,7 +24,8 @@ const FormStep = ({
   isMultipleAllow = false,
   showErrorBelowChildren = false,
   childrenAtTheBottom = true,
-  textInputStyle
+  textInputStyle,
+  onButtonClick2=()=>{},
 }) => {
   const { register, watch, errors, handleSubmit } = useForm({
     defaultValues: _defaultValues,
@@ -80,6 +81,7 @@ const FormStep = ({
         submit
         {...{ onSkip: onSkip, onAdd: onAdd }}
         t={t}
+        onButtonClick2={onButtonClick2}
       >
         {!childrenAtTheBottom && children}
         {inputs}
