@@ -143,7 +143,7 @@ const MultiUploadWrapper = ({
           setFileErrors([]);
         }}
         accept={acceptFiles}
-        message={t(`WORKS_NO_FILE_SELECTED`)}
+        message={t(`NO_FILE_SELECTED`)}
         customClass={customClass}
         enableButton={enableButton}
       />

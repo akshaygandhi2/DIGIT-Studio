@@ -226,7 +226,7 @@ const FieldV1 = ({
                 onChange(e.target.checked);
               }}
               value={value}
-              checked={formData?.[populators?.name]}
+              checked={value}
               isIntermediate={populators?.isIntermediate}
               label={t(`${label}`)}
               styles={populators?.styles}
@@ -283,6 +283,7 @@ const FieldV1 = ({
               prefix={populators?.prefix}
               hideSpan={populators?.hideSpan}
               errorStyle={errors?.[populators?.name]}
+              placeholder={populators?.placeholder}
             />
           </div>
         );

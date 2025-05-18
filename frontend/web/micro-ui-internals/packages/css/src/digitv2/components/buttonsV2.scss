@@ -393,7 +393,7 @@
 }
 
 .digit-selector-button-border {
-  @apply h-8 bg-border text-center border-b-2 border-input-border border-solid outline-none px-lg;
+  @apply h-full bg-border text-center border-b-2 border-input-border border-solid outline-none px-lg;
 
   &:focus {
     @apply outline-none;
@@ -461,6 +461,20 @@
     @media (max-width: 15.625rem) {
       left:0 ;
     }
+  }
+}
+
+.footer-buttons-wrapper {
+  display: flex;
+  gap: theme(digitv2.spacers.spacer4);
+
+  .previous-btn {
+    background-color: #FFFFFF !important;
+    color: theme(digitv2.lightTheme.primary-1) !important;
+    border-radius: theme(digitv2.spacers.spacer3) !important;
+    border: 0.063rem solid theme(digitv2.lightTheme.primary-1) !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
   }
 }
 

@@ -334,7 +334,9 @@
 }
 
 .digit-card-section-header {
-    @apply text-text-primary text-heading-l font-bold;
+    @apply text-text-primary text-heading-l;
+    font-size: 16px !important;
+    font-weight: 400 !important;
 }
 
 .digit-card-search-heading {
