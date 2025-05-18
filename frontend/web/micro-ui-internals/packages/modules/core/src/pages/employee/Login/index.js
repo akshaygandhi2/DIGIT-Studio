@@ -23,7 +23,7 @@ const EmployeeLogin = () => {
   let loginConfig = defaultLoginConfig;
   // useEffect(() => {
   //   if(isLoading == false && mdmsData?.config)
-  //   {  
+  //   {
   //     setloginConfig(mdmsData?.config)
   //   }
   // },[mdmsData, isLoading])
@@ -44,7 +44,7 @@ const EmployeeLogin = () => {
 
   return (
     <Switch>
-      <Route path={`${path}`} exact>
+      <Route path={`${path}`}>
         <LoginComponent config={loginParams[0]} t={t} />
       </Route>
     </Switch>

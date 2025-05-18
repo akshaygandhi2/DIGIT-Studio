@@ -221,6 +221,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
   const resendOtp = async () => {
     const { mobileNumber } = params;
+    setParmas({ ...params, otp: "" });
     const data = {
       mobileNumber,
       tenantId: stateCode,
@@ -270,7 +271,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                 Successful!
               </p>
               <p style={{ fontSize: "16px", textAlign: "center", margin: "0", fontFamily: "Inter" }}>
-                Your phone number has been successfully verified
+                {t("CITIZEN_MOBILE_LOGIN_SUCCESSFUL")}
               </p>
             </div>
           </Modal>

@@ -18,7 +18,7 @@ export const AppModules = ({ stateCode, userType, modules, appTenants }) => {
   const user = Digit.UserService.getUser();
 
   if (!user || !user?.access_token || !user?.info) {
-    return <Redirect to={{ pathname: `/${window?.contextPath}/employee/user/login`, state: { from: location.pathname + location.search } }} />;
+    return <Redirect to={{ pathname: `/${window?.contextPath}/citizen/login`, state: { from: location.pathname + location.search } }} />;
   }
 
   const appRoutes = modules.map(({ code, tenants }, index) => {
