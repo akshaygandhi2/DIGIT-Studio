@@ -8,7 +8,7 @@ import Button from "../atoms/Button";
 import CardCaption from "../atoms/CardCaption";
 import TextInput from "../atoms/TextInput";
 import ActionLinks from "../atoms/ActionLinks";
-import { useHistory } from "react-router-dom";
+
 const InputCard = ({
   t,
   children,
@@ -22,8 +22,8 @@ const InputCard = ({
   onAdd,
   isMultipleAllow = false,
   cardStyle = {},
+  onButtonClick2=()=>{},
 }) => {
-  const history = useHistory();
   // TODO: inputs handle
   return (
     <Card style={cardStyle}>
@@ -33,7 +33,7 @@ const InputCard = ({
       {texts?.cardText2 && <CardText style={{ fontSize: '16px', color: '#111827', textAlign: 'center', fontFamily: 'Inter' }}>{t(texts.cardText2)}</CardText>}
       {children}
       {texts.submitBarLabel ? <Button isDisabled={isDisabled} gradient={true} submit={submit} label={t(texts.submitBarLabel)} onClick={onNext} /> : null}
-      {texts.submitBarLabel2 ? <Button isDisabled={isDisabled}  label={t(texts.submitBarLabel2)} onClick={() => history.push('/employee/login')} /> : null}
+      {texts.submitBarLabel2 ? <Button label={t(texts.submitBarLabel2)} onClick={onButtonClick2} /> : null}
       {texts.skipLabel ? <CardText> {t(texts.skipLabel)} </CardText> : null}
       {texts.skipText ? <ActionLinks label={t(texts.skipText)} onClick={onSkip} /> : null}
       {isMultipleAllow && texts.addMultipleText ? <ActionLinks label={t(texts.addMultipleText)} onClick={onAdd} /> : null}
@@ -47,6 +47,7 @@ InputCard.propTypes = {
   onNext: PropTypes.func,
   onSkip: PropTypes.func,
   onAdd: PropTypes.func,
+  onButtonClick2: PropTypes.func,
   t: PropTypes.func,
 };
 
@@ -56,6 +57,7 @@ InputCard.defaultProps = {
   onNext: undefined,
   onSkip: undefined,
   onAdd: undefined,
+  onButtonClick2: undefined,
   t: (value) => value,
 };
 
