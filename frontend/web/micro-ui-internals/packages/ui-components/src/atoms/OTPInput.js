@@ -12,6 +12,7 @@ const OTPInput = ({
   label,
   inline,
   masking = false,
+  value = "",
 }) => {
   const [otp, setOtp] = useState(Array(length).fill(""));
   const inputRefs = useRef([]);
@@ -21,6 +22,21 @@ const OTPInput = ({
   useEffect(() => {
     inputRefs.current[0].focus();
   }, []);
+
+  useEffect(() => {
+    if (value === "") {
+      setOtp(Array(length).fill(""));
+    } else if (value) {
+      const valueArray = value.split("").slice(0, length);
+      const newOtp = Array(length).fill("");
+      valueArray.forEach((char, index) => {
+        if (index < length) {
+          newOtp[index] = char;
+        }
+      });
+      setOtp(newOtp);
+    }
+  }, [value, length]);
 
   const handleInputChange = (e, index) => {
     const value = e.target.value;
