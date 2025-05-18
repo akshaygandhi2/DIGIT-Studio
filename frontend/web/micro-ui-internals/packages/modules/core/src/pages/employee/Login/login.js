@@ -1,9 +1,11 @@
-import { BackButton, Dropdown, FormComposer, FormComposerV2, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { AppContainer, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import Modal from "../../../../../../ui-components/src/hoc/Modal";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
-import Background from "../../../components/Background";
-import Header from "../../../components/Header";
+import { Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import { loginConfig } from "./config";
+import SelectEmail from "./SelectEmail";
+import SelectOtp from "./SelectOtp";
 
 /* set employee details to enable backward compatiable */
 const setEmployeeDetail = (userObject, token) => {
@@ -19,31 +21,44 @@ const setEmployeeDetail = (userObject, token) => {
   localStorage.setItem("Employee.user-info", JSON.stringify(userObject));
 };
 
+const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/employee`;
+
 const Login = ({ config: propsConfig, t, isDisabled }) => {
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
   const { data: storeData, isLoading: isStoreLoading } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
-  const [user, setUser] = useState(null);
-  const [showToast, setShowToast] = useState(null);
-  const [disable, setDisable] = useState(false);
-
+  const { path, url } = useRouteMatch();
+  const location = useLocation();
   const history = useHistory();
-  // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
+  const searchParams = Digit.Hooks.useQueryParams();
+
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
+  const [params, setParams] = useState({});
+  const [isOtpValid, setIsOtpValid] = useState(true);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [canSubmitEmail, setCanSubmitEmail] = useState(true);
+  const [canSubmitOtp, setCanSubmitOtp] = useState(true);
+  const [formError, setFormError] = useState("");
+  const [disable, setDisable] = useState(false);
 
   useEffect(() => {
     if (!user) {
       return;
     }
+
     Digit.SessionStorage.set("citizen.userRequestObject", user);
     const filteredRoles = user?.info?.roles?.filter((role) => role.tenantId === Digit.SessionStorage.get("Employee.tenantId"));
     if (user?.info?.roles?.length > 0) user.info.roles = filteredRoles;
     Digit.UserService.setUser(user);
     setEmployeeDetail(user?.info, user?.access_token);
-    let redirectPath = `/${window?.contextPath}/employee`;
+
+    // Determine redirect path based on roles and from parameter
+    let redirectPath = DEFAULT_REDIRECT_URL;
 
     /* logic to redirect back to same screen where we left off  */
     if (window?.location?.href?.includes("from=")) {
-      redirectPath = decodeURIComponent(window?.location?.href?.split("from=")?.[1]) || `/${window?.contextPath}/employee`;
+      redirectPath = decodeURIComponent(window?.location?.href?.split("from=")?.[1]) || DEFAULT_REDIRECT_URL;
     }
 
     /*  RAIN-6489 Logic to navigate to National DSS home incase user has only one role [NATADMIN]*/
@@ -58,42 +73,168 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     history.replace(redirectPath);
   }, [user]);
 
-  const onLogin = async (data) => {
-    // if (!data.city) {
-    //   alert("Please Select City!");
-    //   return;
-    // }
-    setDisable(true);
-
-    const requestData = {
-      ...data,
-      userType: "EMPLOYEE",
-    };
-    requestData.tenantId = data?.city?.code || Digit.ULBService.getStateId();
-    delete requestData.city;
-    try {
-      const { UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
-      Digit.SessionStorage.set("Employee.tenantId", info?.tenantId);
-      setUser({ info, ...tokens });
-    } catch (err) {
-      setShowToast(
-        err?.response?.data?.error_description ||
-          (err?.message == "ES_ERROR_USER_NOT_PERMITTED" && t("ES_ERROR_USER_NOT_PERMITTED")) ||
-          t("INVALID_LOGIN_CREDENTIALS")
-      );
-      setTimeout(closeToast, 5000);
+  useEffect(() => {
+    // Check if we have email in location.state and update params accordingly
+    if (location.state?.email) {
+      setParams(prev => ({ ...prev, username: location.state.email }));
     }
-    setDisable(false);
+  }, [location]);
+
+  const isValidEmail = (email) => {
+    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return pattern.test(email);
   };
 
-  const closeToast = () => {
-    setShowToast(null);
+  const handleEmailChange = (event) => {
+    const { value } = event.target;
+    setParams({ ...params, username: value });
+    setFormError("");
+  };
+
+  const reqCreate = {
+    url: `/user-otp/v1/_send`,
+    params: { tenantId: Digit.ULBService.getStateId() },
+    body: {},
+    config: {
+      enable: false,
+    },
+  };
+  const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCreate);
+
+  const onOtpLogin = async (data) => {
+    const inputEmail = data.username;
+
+    if (!inputEmail) {
+      setFormError("Please enter an email address");
+      return;
+    }
+
+    if (!isValidEmail(inputEmail)) {
+      setFormError("Please enter a valid email address");
+      return;
+    }
+
+    setCanSubmitEmail(false);
+    setDisable(true);
+    try {
+      await mutation.mutate(
+        {
+          body: {
+            otp: {
+              username: inputEmail,
+              type: "login",
+              tenantId: Digit.ULBService.getStateId(),
+              userType: "EMPLOYEE",
+            },
+          },
+          config: {
+            enable: true,
+          },
+        },
+        {
+          onError: (error, variables) => {
+            setFormError(
+              error?.response?.data?.Errors?.[0]?.code
+                ? `SANDBOX_RESEND_OTP${error?.response?.data?.Errors?.[0]?.code}`
+                : "Failed to send OTP. Please try again."
+            );
+            setCanSubmitEmail(true);
+            setDisable(false);
+          },
+          onSuccess: async (data) => {
+            setParams({ ...params, username: inputEmail });
+
+            // Clear any previous errors
+            setError(null);
+            setFormError("");
+
+            // Navigate to OTP page with state
+            history.push({
+              pathname: `${path}/otp`,
+              state: {
+                email: inputEmail,
+                tenant: Digit.ULBService.getStateId()
+              },
+            });
+
+            setCanSubmitEmail(true);
+            setDisable(false);
+          },
+        }
+      );
+    } catch (err) {
+      // setError(err?.response?.data?.error_description || t("INVALID_LOGIN_CREDENTIALS"));
+      setCanSubmitEmail(true);
+      setDisable(false);
+    }
+  };
+
+  const handleOtpChange = (otp) => {
+    setParams({ ...params, otp });
+    setFormError("");
+  };
+
+  const selectOtp = async () => {
+    try {
+      setIsOtpValid(true);
+      setCanSubmitOtp(false); // Disable during submission
+      const { username, otp } = params;
+
+      if (!otp || otp.length !== 6) {
+        setIsOtpValid(false);
+        setCanSubmitOtp(true); // Re-enable if validation fails
+        setError(t("INVALID_OTP"));
+        return;
+      }
+
+      const requestData = {
+        username,
+        password: otp,
+        tenantId: Digit.ULBService.getStateId(),
+        userType: "EMPLOYEE",
+      };
+
+      const { UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
+      Digit.SessionStorage.set("Employee.tenantId", info?.tenantId);
+
+      setShowSuccessModal(true);
+
+      setTimeout(() => {
+        setShowSuccessModal(false);
+        setUser({ info, ...tokens });
+      }, 2000);
+    } catch (err) {
+      setCanSubmitOtp(true); // Re-enable if submission fails
+      setIsOtpValid(false);
+      // setError(err?.response?.data?.error_description || t("INVALID_LOGIN_CREDENTIALS"));
+    }
+  };
+
+  const resendOtp = async () => {
+    try {
+      const { username } = params;
+      setParams({ ...params, otp: "" });
+
+      const otpData = {
+        otp: {
+          username: username,
+          userType: "EMPLOYEE",
+          type: "login",
+          tenantId: Digit.ULBService.getStateId(),
+        },
+      };
+
+      await Digit.UserService.sendOtp(otpData, Digit.ULBService.getStateId());
+    } catch (err) {
+      // setError(err?.response?.data?.error_description || t("INVALID_LOGIN_CREDENTIALS"));
+    }
   };
 
   const onForgotPassword = () => {
     history.push(`/${window?.contextPath}/employee/user/forgot-password`);
   };
-  const defaultValue = {
+
+    const defaultValue = {
     code: Digit.ULBService.getStateId(),
     name: Digit.Utils.locale.getTransformedLocale(`TENANT_TENANTS_${Digit.ULBService.getStateId()}`),
   };
@@ -106,44 +247,104 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     config[0].body[2].isMandatory = false;
     config[0].body[2].populators.defaultValue = defaultValue;
   }
-  return isLoading || isStoreLoading ? (
-    <Loader />
-  ) : (
-    <Background>
-      <div className="employeeBackbuttonAlign">
-        <BackButton variant="white" style={{ borderBottom: "none" }} />
-      </div>
 
-      <FormComposerV2
-        onSubmit={onLogin}
-        isDisabled={isDisabled || disable}
-        noBoxShadow
-        inline
-        submitInForm
-        config={config}
-        label={propsConfig.texts.submitButtonLabel}
-        secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
-        onSecondayActionClick={onForgotPassword}
-        heading={propsConfig.texts.header}
-        className="loginFormStyleEmployee"
-        cardSubHeaderClassName="loginCardSubHeaderClassName"
-        cardClassName="loginCardClassName"
-        buttonClassName="buttonClassName"
-      >
-        <Header />
-      </FormComposerV2>
-      {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
-      <div className="employee-login-home-footer" style={{ backgroundColor: "unset" }}>
-        <img
-          alt="Powered by DIGIT"
-          src={window?.globalConfigs?.getConfig?.("DIGIT_FOOTER_BW")}
-          style={{ cursor: "pointer" }}
-          onClick={() => {
-            window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
-          }}
-        />{" "}
-      </div>
-    </Background>
+  if (isLoading || isStoreLoading) {
+    return <Loader />;
+  }
+
+  return (
+    <div style={{ width: "100%", display: "flex", justifyContent: "center" }} className="employee-login-wrapper">
+      <Switch>
+        <AppContainer style={{ marginTop: "80px"}}>
+          {showSuccessModal && (
+            <Modal
+              popupModuleMianStyles={{ padding: "16px" }}
+              hideSubmit={true}
+            >
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 0" }}>
+                <div style={{
+                  background: "#00703C",
+                  borderRadius: "50%",
+                  width: "60px",
+                  height: "60px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: "16px"
+                }}>
+                  <svg width="32" height="32" viewBox="0 0 14 11" fill="none">
+                    <path d="M4.75012 8.1275L1.62262 5L0.557617 6.0575L4.75012 10.25L13.7501 1.25L12.6926 0.192505L4.75012 8.1275Z" fill="white"/>
+                  </svg>
+                </div>
+                <p style={{ fontSize: "24px", textAlign: "center", margin: "10px", fontWeight: "700", fontFamily: "Inter" }}>
+                  Successful!
+                </p>
+                <p style={{ fontSize: "16px", textAlign: "center", margin: "0", fontFamily: "Inter" }}>
+                  {t("EMPLOYEE_EMAIL_LOGIN_SUCCESSFUL")}
+                </p>
+              </div>
+            </Modal>
+          )}
+
+          <Route path={`${path}`} exact>
+            <div className="application-header">
+              <SelectEmail
+                t={t}
+                onSelect={onOtpLogin}
+                email={params.username || ""}
+                onEmailChange={handleEmailChange}
+                config={loginConfig[0]}
+                canSubmit={canSubmitEmail}
+                onForgotPassword={onForgotPassword}
+                isDisabled={isDisabled}
+                disable={disable}
+              />
+            </div>
+            {formError && <Toast error={true} label={formError} onClose={() => setFormError("")} />}
+          </Route>
+
+          <Route path={`${path}/otp`}>
+            <div className="application-header">
+                <SelectOtp
+      config={{
+        ...loginConfig[0],
+        email: params.username || (location.state?.email || ""),
+        inputs: [
+          {
+            label: "CORE_LOGIN_OTP",
+            // type: "text",
+            name: "otp",
+            validation: {
+              required: true,
+              minlength: 0,
+              maxlength: 6,
+              pattern: /^[0-9]*$/,
+              title: "Please enter a valid OTP"
+            },
+            error: "CORE_COMMON_INVALID_OTP"
+          }
+        ],
+        texts: {
+          header: "CS_LOGIN_OTP",
+          cardText: `CS_LOGIN_OTP_TEXT ${params.username || (location.state?.email || "")}`,
+          submitBarLabel: "CS_COMMONS_VERIFY"
+        }
+      }}
+      onOtpChange={handleOtpChange}
+      onResend={resendOtp}
+      onSelect={selectOtp}
+      otp={params.otp || ""}
+      error={isOtpValid}
+      canSubmit={true}
+      t={t}
+    />
+            </div>
+          </Route>
+
+          {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
+        </AppContainer>
+      </Switch>
+    </div>
   );
 };
 
