@@ -97,7 +97,7 @@ const DigitDemoComponent = () => {
               pathname: `/${window.contextPath}/employee/publicservices/${module}/${service}/response`,
               search: "?isSuccess=true",
               state: {
-                message: "Application Created Successfully",
+                message: "COMMON_APPLICATION_CREATED",
                 showID: true,
                 applicationNumber: data?.Application?.applicationNumber,
                 redirectionUrl :  `/${window.contextPath}/employee/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
@@ -109,7 +109,7 @@ const DigitDemoComponent = () => {
               pathname: `/${window.contextPath}/employee/publicservices/${module}/response`,
               search: "?isSuccess=false",
               state: {
-                message: "Application Creation Failed",
+                message: "COMMON_APPLICATION_FAILED",
                 showID: false,
               },
             });
@@ -118,6 +118,12 @@ const DigitDemoComponent = () => {
       );
     }
   };
+
+  const onPrevious = async () => {
+    if(currentStep > 1){
+    setCurrentStep((prev) => prev - 1);
+    }
+  }
 
   const onStepperClick = (stepIndex) => {
     const clickedStepIndex = stepIndex + 1; // because currentStep is 1-based
@@ -157,7 +163,9 @@ const DigitDemoComponent = () => {
         }]}
         defaultValues={{...formData[currentFormConfig?.name || `section_${currentStep}`] || {}}}
         onSubmit={onSubmit}
+        onPrevious={onPrevious}
         fieldStyle={{ marginRight: 0 }}
+        currentStep={currentStep}
       />
       {showToast &&
         <Toast

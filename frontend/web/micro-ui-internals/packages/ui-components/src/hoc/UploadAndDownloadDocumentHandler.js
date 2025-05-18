@@ -215,11 +215,11 @@ const UploadAndDownloadDocumentHandler = ({
       {flow !== "WORKFLOW" && updatedDocuments?.map((item, index) => {
         if (!item?.active) return null;
         return (
-          <LabelFieldPair key={index} style={{ alignItems: item?.showTextInput ? "flex-start" : "center" }}>
+          <LabelFieldPair key={index} style={{ alignItems: item?.showTextInput ? "flex-start" : "center" }} className="digit-label-field-pair-upload-page">
             {item.code && (
-              <div style={{ display: "flex", gap: "1.5rem" }}>
-                <CardLabel className="bolder" style={{ marginTop: item?.showTextInput ? "10px" : "", width: "100%" }}>
-                  {(item?.templatePDFKey || item?.templatedownloadURL) ? t(`${localePrefix}_${item?.code}_DOWNLOAD`) : t(`${localePrefix}_${item?.code}_UPLOAD`)} {item?.isMandatory ? " * " : null}
+              <div style={{ display: "flex", gap: "1.5rem", width: "30%" }}>
+                <CardLabel className="bolder" style={{ marginTop: item?.showTextInput ? "10px" : "", width: "100%", display: "flex", gap: "2px" }}>
+                  <span>{(item?.templatePDFKey || item?.templatedownloadURL) ? t(`${localePrefix}_${item?.code}_DOWNLOAD`) : t(`${localePrefix}_${item?.code}_UPLOAD`)}{item?.isMandatory && <span style={{ color: "#B91900" }}>*</span>}</span>
                 </CardLabel>
 
                 {(item?.templatePDFKey || item?.templatedownloadURL) && (
@@ -245,7 +245,7 @@ const UploadAndDownloadDocumentHandler = ({
               </div>
             )}
 
-            <div className="digit-field">
+            <div className="digit-field" style={{flex: 1, maxWidth: '100%' }}>
               {item?.showTextInput && (
                 <TextInput
                   style={{ marginBottom: "16px" }}

@@ -3,6 +3,17 @@
   gap: theme(digitv2.spacers.spacer1);
 }
 
+.digit-tag-container-wrapper {
+  display: flex;
+  gap: theme(digitv2.spacers.spacer2);
+  flex-wrap: wrap;
+
+  @media (max-aspect-ratio: 9/16) {
+    /* Media query for mobile */
+    flex-direction: column;
+  }
+}
+
 .digit-tag-container {
   @apply flex flex-wrap mb-md items-center;
   gap: theme(digitv2.spacers.spacer2);
@@ -18,11 +29,13 @@
     /* Media query for mobile */
     width: 100%;
     max-width: 100%;
+    margin: 0 !important;
+    margin-top: theme(digitv2.spacers.spacer2);
   }
 
   @media (min-aspect-ratio: 3/4) {
     /* Media query for desktop */
-    max-width: 37.5rem;
+    max-width: 296px;
     min-width: 12.5rem;
   }
 
@@ -166,4 +179,29 @@
 .nonclickable{
   pointer-events: none;
   cursor:none;
+}
+
+.upload-button {
+  max-width: fit-content !important;
+  padding: 8px 24px !important;
+  background-color: #FFFFFF;
+  border: 1px solid theme(digitv2.lightTheme.primary);
+  border-radius: 12px;
+  min-width: unset !important;
+  height: 40px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+
+  h2 {
+    color: theme(digitv2.lightTheme.primary);
+    margin: 0 !important;
+    font-size: 16px !important;
+
+  }
+
+}
+
+.digit-file-upload-status{
+    margin: 0 !important;
 }
