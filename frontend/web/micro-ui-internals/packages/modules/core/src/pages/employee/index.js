@@ -6,7 +6,6 @@ import ErrorBoundary from "../../components/ErrorBoundaries";
 import TopBarSideBar from "../../components/TopBarSideBar";
 import ChangePassword from "./ChangePassword";
 import ForgotPassword from "./ForgotPassword";
-import LanguageSelection from "./LanguageSelection";
 import EmployeeLogin from "./Login";
 import UserProfile from "../citizen/Home/UserProfile";
 import ErrorComponent from "../../components/ErrorComponent";
@@ -94,6 +93,9 @@ const EmployeeApp = ({
               <Route path={`${path}/user/login`}>
                 <EmployeeLogin />
               </Route>
+              <Route path={`${path}/user/language-selection`}>
+                <Redirect to={`/${window?.contextPath}/employee/user/login`} />
+              </Route>
               <Route path={`${path}/user/forgot-password`}>
                 <ForgotPassword />
               </Route>
@@ -110,9 +112,6 @@ const EmployeeApp = ({
                     history.push(`/${window?.contextPath}/${Digit?.UserService?.getType?.()}`);
                   }}
                 />
-              </Route>
-              <Route path={`${path}/user/language-selection`}>
-                <LanguageSelection />
               </Route>
               <Route>
                 <Redirect to={`${path}/login`} />

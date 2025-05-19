@@ -1,7 +1,7 @@
 import { BackButton, CitizenHomeCard, CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
+import { Route, Switch, useHistory, useRouteMatch, Redirect } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundaries";
 import ErrorComponent from "../../components/ErrorComponent";
 import { AppHome, processLinkData } from "../../components/Home";
@@ -19,8 +19,6 @@ import StaticDynamicCard from "./StaticDynamicComponent/StaticDynamicCard";
 
 const sidebarHiddenFor = [
   `${window?.contextPath}/citizen/register/name`,
-  `/${window?.contextPath}/citizen/select-language`,
-  `/${window?.contextPath}/citizen/select-location`,
   `/${window?.contextPath}/citizen/login`,
   `/${window?.contextPath}/citizen/register/otp`,
 ];
@@ -164,13 +162,14 @@ const Home = ({
             <CitizenHome />
           </Route>
 
-          <Route exact path={`${path}/select-language`}>
-            <LanguageSelection />
+          <Route path={`${path}/select-language`}>
+            <Redirect to={`/${window?.contextPath}/citizen/login`} />
           </Route>
 
-          <Route exact path={`${path}/select-location`}>
-            <LocationSelection />
+          <Route path={`${path}/select-location`}>
+            <Redirect to={`/${window?.contextPath}/citizen/login`} />
           </Route>
+
           <Route path={`${path}/error`}>
             <ErrorComponent
               initData={initData}
