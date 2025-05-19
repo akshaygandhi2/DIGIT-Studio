@@ -64,6 +64,11 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData ,de
     pathname,
     initData,
   };
+
+  // Determine the appropriate route based on the path
+  const isEmployeePath = pathname.includes("/employee");
+  const defaultPath = isEmployeePath ? "employee/user/login" : "citizen/login";
+
   return (
     <Switch>
       <Route path={`/${window?.contextPath}/employee`}>
@@ -73,7 +78,7 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData ,de
         <CitizenApp {...commonProps} />
       </Route>
       <Route>
-        <Redirect to={`/${window?.contextPath}/${defaultLanding}`} />
+        <Redirect to={`/${window?.contextPath}/${defaultPath}`} />
       </Route>
     </Switch>
   );
