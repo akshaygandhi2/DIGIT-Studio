@@ -80,7 +80,7 @@ const FieldV1 = ({
 
   const renderCharCount = () => {
     if (charCount) {
-      const maxCharacters = populators?.validation?.maxlength || 0;
+      const maxCharacters = populators?.maxLength || 0;
       return (
         <CardText
           style={{
@@ -159,12 +159,14 @@ const FieldV1 = ({
             errorStyle={errors?.[populators?.name]}
             max={populators?.validation?.max}
             min={populators?.validation?.min}
-            maxlength={populators?.validation?.maxlength}
-            minlength={populators?.validation?.minlength}
+            maxLength={populators?.maxLength}
+            minLength={populators?.minLength}
             customIcon={populators?.customIcon}
             customClass={populators?.customClass}
             onIconSelection={populators?.onIconSelection}
             id={fieldId}
+            validation={populators?.validation}
+            ValidationRequired={true}
           />
         );
       case "textarea":
@@ -184,8 +186,8 @@ const FieldV1 = ({
               populators={populators}
               inputRef={ref}
               errorStyle={errors?.[populators?.name]}
-              maxlength={populators?.validation?.maxlength}
-              minlength={populators?.validation?.minlength}
+              maxlength={populators?.maxLength}
+              minlength={populators?.minLength}
               id={fieldId}
             />
           </div>
@@ -284,6 +286,10 @@ const FieldV1 = ({
               hideSpan={populators?.hideSpan}
               errorStyle={errors?.[populators?.name]}
               placeholder={populators?.placeholder}
+              validation={populators?.validation}
+              ValidationRequired={true}
+              minLength={populators?.minLength}
+              maxLength={populators?.maxLength}
             />
           </div>
         );
@@ -391,8 +397,8 @@ const FieldV1 = ({
             min={populators?.validation?.min}
             disable={disabled}
             style={type === "date" ? { paddingRight: "3px" } : ""}
-            maxlength={populators?.validation?.maxlength}
-            minlength={populators?.validation?.minlength}
+            maxlength={populators?.maxLength}
+            minlength={populators?.minLength}
             customIcon={populators?.customIcon}
             customClass={populators?.customClass}
             prefix={populators?.prefix}
