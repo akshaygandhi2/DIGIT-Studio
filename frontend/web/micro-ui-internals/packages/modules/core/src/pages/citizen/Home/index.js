@@ -27,7 +27,7 @@ const Home = () => {
   });
 
   if (!tenantId) {
-    history.push(`/${window?.contextPath}/citizen/select-language`);
+    history.push(`/${window?.contextPath}/citizen/login`);
   }
 
   const appBannerWebObj = uiHomePage?.appBannerDesktop;

@@ -50,7 +50,7 @@ function App() {
       stateCode={stateCode}
       enabledModules={enabledModules}
       moduleReducers={moduleReducers}
-      defaultLanding="citizen"
+      defaultLanding="citizen/login"
     />
   );
 }
