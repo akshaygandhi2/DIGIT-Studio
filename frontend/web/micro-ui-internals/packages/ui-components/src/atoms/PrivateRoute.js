@@ -11,7 +11,7 @@ export const PrivateRoute = ({ component: Component, roles, ...rest }) => {
         const userType = window?.Digit?.UserService.getType();
         function getLoginRedirectionLink() {
           if (userType === "employee") {
-            return `/${window?.contextPath}/employee/user/language-selection`;
+            return `/${window?.contextPath}/employee/user/login`;
           } else {
             return `/${window?.contextPath}/citizen/login`;
           }
