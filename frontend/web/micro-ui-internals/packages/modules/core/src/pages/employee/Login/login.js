@@ -260,6 +260,9 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
             <Modal
               popupModuleMianStyles={{ padding: "16px" }}
               hideSubmit={true}
+              showClose={false}
+              headerBarMain={null}
+              headerBarEnd={null}
             >
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 0" }}>
                 <div style={{
@@ -277,7 +280,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
                   </svg>
                 </div>
                 <p style={{ fontSize: "24px", textAlign: "center", margin: "10px", fontWeight: "700", fontFamily: "Inter" }}>
-                  Successful!
+                  {t("MODEL_LOGIN_SUCCESSFUL_HEADER")}
                 </p>
                 <p style={{ fontSize: "16px", textAlign: "center", margin: "0", fontFamily: "Inter" }}>
                   {t("EMPLOYEE_EMAIL_LOGIN_SUCCESSFUL")}

@@ -7,6 +7,7 @@ import { serviceConfig } from "../../../configs/serviceConfiguration";
 import { generateFormConfig } from "../../../utils/generateFormConfigFromSchemaUtil";
 import { transformToApplicationPayload } from "../../../utils";
 import { Loader } from "@egovernments/digit-ui-react-components";
+import SummaryView from "../../../components/SummaryView";
 
 const DigitDemoComponent = () => {
   const { t } = useTranslation();
@@ -34,7 +35,6 @@ const DigitDemoComponent = () => {
       },
     },
   };
-
   const { isLoading: moduleListLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
   const config = data?.mdms?.find((item) =>
@@ -54,7 +54,6 @@ const DigitDemoComponent = () => {
   // console.log(configMap[module],"configMap")
 
   const rawConfig = generateFormConfig(Updatedconfig, module.toUpperCase(), service?.toUpperCase());
-  console.log(rawConfig,"rawconfig");
   const steps = rawConfig.map((config) => config.head || config.label || "Untitled Section");
   const currentFormConfig = rawConfig[currentStep - 1];
   const schemaCode = queryStrings?.serviceCode || "SVC-DEV-TRADELICENSE-NEWTL-04";
@@ -139,8 +138,8 @@ const DigitDemoComponent = () => {
   };
 
   const onPrevious = async () => {
-    if(currentStep > 1){
-    setCurrentStep((prev) => prev - 1);
+    if (currentStep > 1) {
+      setCurrentStep((prev) => prev - 1);
     }
   }
 
@@ -178,6 +177,10 @@ const DigitDemoComponent = () => {
     return <Loader />;
   }
 
+  const isSummaryStep = currentStep === rawConfig?.length; // Summary is the 5th step
+
+  console.log(formData[currentFormConfig?.name || `section_${currentStep}`], "mmmmmmm")
+  console.log(formData, "formdata");
   return (
     <React.Fragment>
       <Stepper
@@ -186,22 +189,40 @@ const DigitDemoComponent = () => {
         onStepClick={onStepperClick}
         activeSteps={currentStep}
       />
-      <FormComposerV2
-        heading={t(`${serviceCode}_HEADING`)}
-        label={currentStep === steps.length ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
-        config={[
-          {
+      {isSummaryStep ? (
+        <div className="summary-container">
+          <SummaryView
+            serviceCode={serviceCode}
+            formData={formData}
+            steps={steps}
+            t={t}
+          />
+          <div className="flex justify-end mt-8">
+            <button
+              className="submit-btn"
+              onClick={() => onSubmit(formData)}
+            >
+              {t(`${serviceCode}_SUBMIT`)}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <FormComposerV2
+          heading={t(`${serviceCode}_HEADING`)}
+          label={currentStep === steps.length ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
+          description={" "}
+          text={" "}
+          config={[{
             ...currentFormConfig,
             body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
-          },
-        ]}
-        defaultValues={currentFormConfig?.type === "multiChildForm"? {...formData} : { ...formData[currentFormConfig?.name || `section_${currentStep}`] || {} }}
-        onSubmit={onSubmit}
-        onPrevious={onPrevious}
-        fieldStyle={{ marginRight: 0 }}
-        currentStep={currentStep}
-        onFormValueChange={onFormValueChange}
-      />
+          }]}
+          fieldStyle={{ marginRight: 0 }}
+          currentStep={currentStep}
+          defaultValues={{ ...formData[currentFormConfig?.name || `section_${currentStep}`] || {} }}
+          onSubmit={onSubmit}
+          onPrevious={onPrevious}
+        />
+      )}
       {showToast && (
         <Toast
           style={{ zIndex: "10000" }}
