@@ -7,6 +7,7 @@ import { serviceConfig } from "../../../configs/serviceConfiguration";
 import { generateFormConfig } from "../../../utils/generateFormConfigFromSchemaUtil";
 import { transformToApplicationPayload } from "../../../utils";
 import { Loader } from "@egovernments/digit-ui-react-components";
+import SummaryView from "../../../components/SummaryView";
 
 const DigitDemoComponent = () => {
   const { t } = useTranslation();
@@ -15,7 +16,6 @@ const DigitDemoComponent = () => {
   const { module } = useParams();
   const { service } = useParams();
   let serviceCode = `${module.toUpperCase()}_${service.toUpperCase()}`;
-
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({});
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -31,14 +31,14 @@ const DigitDemoComponent = () => {
     },
     //changeQueryName: "sorOverhead"
   };
-  const {isLoading: moduleListLoading, data} = Digit.Hooks.useCustomAPIHook(requestCriteria);
+  const { isLoading: moduleListLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
   let config = data?.mdms?.filter((item) => item?.uniqueIdentifier.toLowerCase() === `${module}.${service}`.toLowerCase())[0];
 
   // let config = serviceConfig;
 
   let Updatedconfig = {
-    ServiceConfiguration : [config?.data],
+    ServiceConfiguration: [config?.data],
     tenantId: tenantId,
     module: module,
   }
@@ -49,7 +49,7 @@ const DigitDemoComponent = () => {
   // };
   // console.log(configMap[module],"configMap")
 
-  const rawConfig = generateFormConfig(Updatedconfig, module.toUpperCase(),service?.toUpperCase());
+  const rawConfig = generateFormConfig(Updatedconfig, module.toUpperCase(), service?.toUpperCase());
   const steps = rawConfig.map((config) => config.head || config.label || "Untitled Section");
 
   const currentFormConfig = rawConfig[currentStep - 1];
@@ -70,8 +70,8 @@ const DigitDemoComponent = () => {
 
   const onSubmit = async (data) => {
     const sectionName = currentFormConfig.name || `section_${currentStep}`;
-  
-    const updatedFormData = currentFormConfig?.type === "multiChildForm" || currentFormConfig?.type === "documents" ? { ...formData, ...data } : { ...formData, [sectionName]: data }; 
+
+    const updatedFormData = currentFormConfig?.type === "multiChildForm" || currentFormConfig?.type === "documents" ? { ...formData, ...data } : { ...formData, [sectionName]: data };
     setFormData(updatedFormData);
 
     const isLastStep = currentStep === rawConfig.length;
@@ -86,7 +86,7 @@ const DigitDemoComponent = () => {
           params: {},
           headers: { "x-tenant-id": tenantId },
           method: "POST",
-          body: transformToApplicationPayload(updatedFormData,Updatedconfig,service,tenantId),
+          body: transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId),
           config: {
             enable: true,
           },
@@ -100,7 +100,7 @@ const DigitDemoComponent = () => {
                 message: "COMMON_APPLICATION_CREATED",
                 showID: true,
                 applicationNumber: data?.Application?.applicationNumber,
-                redirectionUrl :  `/${window.contextPath}/employee/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
+                redirectionUrl: `/${window.contextPath}/employee/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
               },
             });
           },
@@ -120,8 +120,8 @@ const DigitDemoComponent = () => {
   };
 
   const onPrevious = async () => {
-    if(currentStep > 1){
-    setCurrentStep((prev) => prev - 1);
+    if (currentStep > 1) {
+      setCurrentStep((prev) => prev - 1);
     }
   }
 
@@ -142,8 +142,10 @@ const DigitDemoComponent = () => {
     return <Loader />;
   }
 
-  console.log(formData[currentFormConfig?.name || `section_${currentStep}`],"mmmmmmm")
-  console.log(formData,"formdata");
+  const isSummaryStep = currentStep === rawConfig?.length; // Summary is the 5th step
+
+  console.log(formData[currentFormConfig?.name || `section_${currentStep}`], "mmmmmmm")
+  console.log(formData, "formdata");
   return (
     <React.Fragment>
       <Stepper
@@ -152,29 +154,49 @@ const DigitDemoComponent = () => {
         onStepClick={onStepperClick}
         activeSteps={currentStep}
       />
-      <FormComposerV2
-        heading={t(`${serviceCode}_HEADING`)}
-        label={currentStep === steps.length ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
-        description={" "}
-        text={" "}
-        config={[{
-          ...currentFormConfig,
-          body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
-        }]}
-        defaultValues={{...formData[currentFormConfig?.name || `section_${currentStep}`] || {}}}
-        onSubmit={onSubmit}
-        onPrevious={onPrevious}
-        fieldStyle={{ marginRight: 0 }}
-        currentStep={currentStep}
-      />
-      {showToast &&
+      {isSummaryStep ? (
+        <div className="summary-container">
+          <SummaryView
+            serviceCode={serviceCode}
+            formData={formData}
+            steps={steps}
+            t={t}
+          />
+          <div className="flex justify-end mt-8">
+            <button
+              className="submit-btn"
+              onClick={() => onSubmit(formData)}
+            >
+              {t(`${serviceCode}_SUBMIT`)}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <FormComposerV2
+          heading={t(`${serviceCode}_HEADING`)}
+          label={currentStep === steps.length ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
+          description={" "}
+          text={" "}
+          config={[{
+            ...currentFormConfig,
+            body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
+          }]}
+          fieldStyle={{ marginRight: 0 }}
+          currentStep={currentStep}
+          defaultValues={{ ...formData[currentFormConfig?.name || `section_${currentStep}`] || {} }}
+          onSubmit={onSubmit}
+          onPrevious={onPrevious}
+        />
+      )}
+      {showToast && (
         <Toast
           style={{ zIndex: "10000" }}
           error={showToast?.error}
           label={t(showToast?.message)}
           onClose={closeToast}
           isDleteBtn={true}
-        />}
+        />
+      )}
     </React.Fragment>
   );
 };
