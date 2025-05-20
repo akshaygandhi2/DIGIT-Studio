@@ -91,7 +91,11 @@ const EmployeeApp = ({
           >
             <Switch>
               <Route path={`${path}/user/login`}>
-                <EmployeeLogin />
+                {userDetails?.access_token ? (
+                  <Redirect to={`/${window?.contextPath}/employee`} />
+                ) : (
+                  <EmployeeLogin />
+                )}
               </Route>
               <Route path={`${path}/user/language-selection`}>
                 <Redirect to={`/${window?.contextPath}/employee/user/login`} />
