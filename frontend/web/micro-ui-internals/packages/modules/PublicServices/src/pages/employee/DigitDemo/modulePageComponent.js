@@ -1,9 +1,8 @@
 import React from "react";
 import { Card, Button, HeaderComponent, CardText, Loader, SubmitBar } from "@egovernments/digit-ui-components";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { transformResponseforModulePage } from "../../../utils";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const modulePageComponent = ({}) => {
   const { t } = useTranslation();
@@ -49,7 +48,12 @@ const modulePageComponent = ({}) => {
         </Link>
             ))
             }
-            <Link className="link" to={`/${window.contextPath}/employee/publicservices/${product.module}/Search`}>
+            <Link className="link" to={{
+              pathname: `/${window.contextPath}/employee/publicservices/${product.module}/search`,
+              state: {
+                moduleData:data // example
+              }
+            }}>
               Search
             </Link>
             <Link className="link" to={`/${window.contextPath}/employee/publicservices/${product.module}/Inbox`}>

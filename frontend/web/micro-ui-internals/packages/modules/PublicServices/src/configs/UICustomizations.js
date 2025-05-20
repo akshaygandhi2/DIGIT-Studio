@@ -39,11 +39,13 @@ export const UICustomizations = {
           const custom = data.body.SearchCriteria.custom;
           data.headers = {"X-Tenant-Id":tenantId}
           data.method = "GET"
+          data.config = { enabled : false   }
           if(custom?.applicationNumber) data.params.applicationNumber = custom?.applicationNumber;
           if(custom?.status) data.params.status = custom?.status;
           if(custom?.todate) data.params.todate = Digit.Utils.date.convertDateToEpoch(custom?.todate);
           if(custom?.fromdate) data.params.todate = Digit.Utils.date.convertDateToEpoch(custom?.fromdate);
           if(data?.state?.searchForm?.businessService) data.url = `${data.url}/${data?.state?.searchForm?.businessService?.serviceCode}`
+          if(data?.state?.searchForm?.businessService) data.config = { enabled : true}
           delete data.body.SearchCriteria.custom;
         //   const { field, value, isActive } = custom || {};
         //   filters[field?.code] = value;
@@ -110,13 +112,28 @@ export const UICustomizations = {
         preProcess: (data, additionalDetails) => {
           const { module } = useParams();
           const tenantId = Digit.ULBService.getCurrentTenantId();
-          data.body.inbox.moduleSearchCriteria.tenantId = tenantId;
-          data.body.inbox.moduleSearchCriteria.businessService=`${module}.${data?.state?.searchForm?.businessService?.code}`;
+          data.body.inbox.moduleSearchCriteria.businessService=`${data?.state?.searchForm?.businessService?.code}`;
+          data.body.inbox.moduleSearchCriteria.module=`${module}`;
           data.body.inbox.processSearchCriteria.businessService=[`${module}.${data?.state?.searchForm?.businessService?.code}`];
           data.body.inbox.processSearchCriteria.tenantId = tenantId;
           data.body.inbox.tenantId = tenantId;
+          delete data.body.inbox.moduleSearchCriteria.assignee;
           data.method = "POST"
           return data;
+        },
+        additionalCustomizations: (row, key, column, value, t, searchResult) => {
+          console.log(row, key, column, value, t, searchResult)
+          if (key === "Application Number") {
+            return (
+              <span className="link">
+                <Link
+                  to={`/${window.contextPath}/employee/publicservices/${row?.businessObject?.module}/${row?.businessObject?.businessService}/ViewScreen?applicationNumber=${row?.businessObject?.applicationNumber}&serviceCode=${row?.serviceCode}`}
+                >
+                  {String(value ? value : t("ES_COMMON_NA"))}
+                </Link>
+              </span>
+            );
+          }
         },
         selectionHandler: (event) => {
         }, // selectionHandler : Is used to handle row selections. gets on object which containes 3 key value pairs:  allSelected(whether all rows are selected or not), selectedCount (no, of rows selected),selectedRows( an array of selected rows)

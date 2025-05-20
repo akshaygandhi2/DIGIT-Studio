@@ -4,7 +4,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Switch } from "react-router-dom";
 import DigitDemoComponent from "./DigitDemo/digitDemoComponent";
-import SearchTL from "./DigitDemo/searchTL";
+import DigitDemoSearch from "./DigitDemo/DigitDemoSearch";
 import Response from "./Response";
 import DigitDemoViewComponent from "./DigitDemo/digitDemoViewComponent";
 import ModulePageComponent from "./DigitDemo/modulePageComponent";
@@ -42,7 +42,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         </React.Fragment>
         <PrivateRoute path={`${path}/:module/:service/Apply`} component={() => <DigitDemoComponent />} />
         <PrivateRoute path={`${path}/:module/:service/response`} component={() => <Response />} />
-        <PrivateRoute path={`${path}/:module/Search`} component={() => <SearchTL />} />
+        <PrivateRoute path={`${path}/:module/search`} component={() => <DigitDemoSearch />} />
         <PrivateRoute path={`${path}/:module/:service/ViewScreen`} component={() => <DigitDemoViewComponent />} />
         <PrivateRoute path={`${path}/modules`} component={() => <ModulePageComponent />} />
         <PrivateRoute path={`${path}/:module/inbox`} component={() => <InboxService />} />

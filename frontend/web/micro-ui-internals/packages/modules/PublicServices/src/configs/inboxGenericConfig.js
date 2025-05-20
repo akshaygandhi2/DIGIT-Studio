@@ -178,19 +178,20 @@ export const InboxConfig = () => {
                     columns: [
                         {
                             label: "Application Number",
-                            jsonPath: "applicationNumber",
+                            jsonPath: "businessObject.applicationNumber",
+                            additionalCustomization: true,
                         },
                         {
                             label: "Business Service",
-                            jsonPath: "businessService",
+                            jsonPath: "businessObject.businessService",
                         },
                         {
                             label: "Status",
-                            jsonPath: "statusMap",
+                            jsonPath: "businessObject.status",
                         },
                         {
                             label: "SLA",
-                            jsonPath: "nearingSlaCount",
+                            jsonPath: "businessObject.serviceSla",
                         }
                     ],
                     tableProps: {
