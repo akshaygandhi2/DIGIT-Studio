@@ -2,6 +2,15 @@ import { AddressFields } from "./templateConfig";
 import { ApplicantFields } from "./templateConfig";
 import { documentFields } from "./templateConfig";
 
+
+const createSummaryForm = () => {
+  return {
+    head: "BPA_BPA_PCO_SUMMARY",
+    name: "summary",
+    hideForm: true,
+  };
+};
+
 export const generateFormConfig = (config, module, service) => {
   const serviceFields = config?.ServiceConfiguration?.[0]?.fields || [];
 
@@ -75,7 +84,7 @@ export const generateFormConfig = (config, module, service) => {
       head: `${module}_${service}_${documentField.head.toUpperCase()}`,
       "type": "documents",
       body: [{...documentField?.body?.[0], localePrefix: `${module.toUpperCase()}_${service.toUpperCase()}_${documentField.head.toUpperCase()}`}],
-     
+
     };
   };
 
@@ -120,8 +129,9 @@ export const generateFormConfig = (config, module, service) => {
     config?.ServiceConfiguration?.[0]?.documents && documentFields?.[0]
       ? getDocumentFields(documentFields[0])
       : {};
-  return [applicantFieldsStep,...steps, ...stepForms,
-    // addressFieldsStep, 
-    documentform
-  ];
+
+
+  const summaryForm = createSummaryForm();
+
+  return [applicantFieldsStep, ...steps, ...stepForms, documentform, summaryForm];
 };
