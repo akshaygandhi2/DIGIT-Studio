@@ -238,18 +238,20 @@ const PopUp = (props) => {
                     )}
                   </div>
                 </div>
-                <span
-                  className="digit-popup-close"
-                  style={{ display: "flex" }}
-                  onClick={() => handleClose()}
-                >
-                  <SVG.Close
-                    fill={"#363636"}
-                    width={"24px"}
-                    height={"24px"}
-                    className="popup-close-svg"
-                  />
-                </span>
+                {props?.showClose !== false && (
+                  <span
+                    className="digit-popup-close"
+                    style={{ display: "flex" }}
+                    onClick={() => handleClose()}
+                  >
+                    <SVG.Close
+                      fill={"#363636"}
+                      width={"24px"}
+                      height={"24px"}
+                      className="popup-close-svg"
+                    />
+                  </span>
+                )}
               </div>
             </div>
           </>
