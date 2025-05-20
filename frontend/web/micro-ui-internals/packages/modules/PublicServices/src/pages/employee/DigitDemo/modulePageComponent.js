@@ -25,8 +25,8 @@ const modulePageComponent = ({}) => {
   let detailsConfig = data ? transformResponseforModulePage(data?.Services) : [];
 
   const userDetails = Digit.SessionStorage.get("User");
-
-  const isArchitect = userDetails?.info?.roles?.some(role => role.code === "BPA_ARCHITECT");
+  const userType = userDetails?.info?.type?.toLowerCase();
+  const isArchitect = userDetails?.info?.roles?.some(role => role.code !== "CITIZEN");
 
 
   if (isLoading) {
@@ -50,7 +50,7 @@ const modulePageComponent = ({}) => {
             </div>
             <CardText className="product-description">{t(product?.cardDescription)}</CardText>
             {queryStrings?.selectedPath === "Apply" && isArchitect && product?.businessServices.map((bs) => (
-             <Link className="link" to={`/${window.contextPath}/employee/publicservices/${product.module}/${bs.businessService}/Apply?serviceCode=${bs?.serviceCode}`}>
+              <Link className="link" to={`/${window.contextPath}/${userType}/publicservices/${product.module}/${bs.businessService}/Apply?serviceCode=${bs?.serviceCode}`}>
               {bs.businessService}
         </Link>
             ))

@@ -39,7 +39,7 @@ export const AddressFields = [
                   isLabelNeeded:false
                 },
                 //"preSelected":["NEWTEST00222_MO","NEWTEST00222_MO_11_MARYLAND","NEWTEST00222_MO_11_06_PLEEBO"],
-                
+
                 // "frozenData":
                 // [{
                 //     code: "NEWTEST00222_MO",
@@ -129,7 +129,7 @@ export const ApplicantFields =  [{
         //   "format": "radioordropdown",
         //   "reference": "mdms",
         //   "required": false,
-        //   "schema": "common-masters.GenderType" 
+        //   "schema": "common-masters.GenderType"
         // },
         {
           "name": "wayToAddress",
@@ -172,7 +172,7 @@ export const ApplicantFields =  [{
           "minLength": 6
         },
         {
-          "name": "Telephone",
+          "name": "telephone",
           "type": "string",
           "label": "Telephone",
           "format": "mobileNumber",
@@ -234,7 +234,7 @@ export const documentFields = [
             "name": "uploadedDocs",
             "populators": {
                 "name": "uploaded",
-                "action": "APPLY"  
+                "action": "APPLY"
             },
             "customClass": "input-emp",
             "localePrefix": "PCO_DOC"
