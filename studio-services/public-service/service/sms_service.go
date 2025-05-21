@@ -54,13 +54,17 @@ func (s *SMSService) SendSMS(application model.ApplicationRequest, tenantId stri
 		log.Printf("Error fetching bill for application %s: %v", application.Application.ApplicationNumber, err)
 		return nil, err
 	}
-
+	if jsonBytes, err := json.MarshalIndent(bills, "", "  "); err == nil {
+		log.Printf("FetchBill Request JSON:\n%s", string(jsonBytes))
+	} else {
+		log.Printf("Failed to marshal billRequest: %v", err)
+	}
 	var totalAmount float64
 	for _, bill := range bills {
 		totalAmount += bill.TotalAmount
 	}
 	amountStr := strconv.FormatFloat(totalAmount, 'f', 2, 64)
-
+    log.Printf("amtStr::::",amountStr)
 	// Loop over all owners to send SMS
 	for _, owner := range owners {
 		msg := templateMsg
