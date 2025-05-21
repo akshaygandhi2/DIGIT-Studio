@@ -21,7 +21,7 @@ npm install --save @tekdi/djibouti-ui-css
 After adding the dependency in your package.json:
 
 ```json
-"@tekdi/djibouti-ui-css": "^0.0.6"
+"@tekdi/djibouti-ui-css": "^0.0.7"
 ```
 
 ### Method 1: Add to HTML directly
@@ -29,7 +29,7 @@ After adding the dependency in your package.json:
 Add the following to your HTML head:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/@tekdi/djibouti-ui-css@0.0.6/dist/index.css" />
+<link rel="stylesheet" href="https://unpkg.com/@tekdi/djibouti-ui-css@0.0.7/dist/index.css" />
 ```
 
 ### Method 2: Import in JavaScript
@@ -37,7 +37,7 @@ Add the following to your HTML head:
 If you're using a bundler like webpack, you can import the styles directly:
 
 ```javascript
-import '@tekdi/djibouti-ui-css/dist/index.css';
+import "@tekdi/djibouti-ui-css/dist/index.css";
 ```
 
 ## Font Configuration
@@ -45,6 +45,7 @@ import '@tekdi/djibouti-ui-css/dist/index.css';
 This package uses Inter as the default font. All elements automatically use Inter without requiring explicit font-family declarations in your components.
 
 ### Font Weights Available:
+
 - Regular (400)
 - Medium (500)
 - Semi-bold (600)
@@ -57,27 +58,27 @@ The package comes with utility classes for easy font usage:
 ```css
 /* Base font class */
 .font-inter {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 /* Font weight variants */
 .font-inter-regular {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 400;
 }
 
 .font-inter-medium {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 500;
 }
 
 .font-inter-semibold {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 600;
 }
 
 .font-inter-bold {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 700;
 }
 ```
@@ -139,9 +140,9 @@ frontend/micro-ui/web/public/index.html
 ```jsx
 /** add this import **/
 
-  <link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-components-css@0.0.2/dist/index.css" />
-
+<link rel="stylesheet" href="https://unpkg.com/@egovernments/digit-ui-components-css@0.0.2/dist/index.css" />
 ```
+
 ## Changelog
 
 ### Summary for Version [0.0.2] - 2024-06-03
@@ -170,7 +171,6 @@ frontend/micro-ui/web/public/index.html
 - Updated Color Typography.
 
 For a detailed changelog, see the [CHANGELOG.md](./CHANGELOG.md) file.
-
 
 ## Published from DIGIT-UI-LIBRARIES
 
