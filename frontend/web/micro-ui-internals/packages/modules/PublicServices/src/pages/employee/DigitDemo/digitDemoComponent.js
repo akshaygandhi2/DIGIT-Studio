@@ -26,7 +26,7 @@ const DigitDemoComponent = () => {
     body: {
       MdmsCriteria: {
         tenantId: tenantId,
-        schemaCode: "Studio.ServiceConfiguration"
+        schemaCode: "Studio.ServiceConfiguration",
       },
     },
     //changeQueryName: "sorOverhead"
@@ -41,7 +41,7 @@ const DigitDemoComponent = () => {
     ServiceConfiguration: [config?.data],
     tenantId: tenantId,
     module: module,
-  }
+  };
 
   // const configMap = {
   //   pgr: serviceConfigPGR,
@@ -71,7 +71,10 @@ const DigitDemoComponent = () => {
   const onSubmit = async (data) => {
     const sectionName = currentFormConfig.name || `section_${currentStep}`;
 
-    const updatedFormData = currentFormConfig?.type === "multiChildForm" || currentFormConfig?.type === "documents" ? { ...formData, ...data } : { ...formData, [sectionName]: data };
+    const updatedFormData =
+      currentFormConfig?.type === "multiChildForm" || currentFormConfig?.type === "documents"
+        ? { ...formData, ...data }
+        : { ...formData, [sectionName]: data };
     setFormData(updatedFormData);
 
     const isLastStep = currentStep === rawConfig.length;
@@ -123,7 +126,7 @@ const DigitDemoComponent = () => {
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
     }
-  }
+  };
 
   const onStepperClick = (stepIndex) => {
     const clickedStepIndex = stepIndex + 1; // because currentStep is 1-based
@@ -137,36 +140,20 @@ const DigitDemoComponent = () => {
     setShowToast(false);
   };
 
-
   if (moduleListLoading) {
     return <Loader />;
   }
 
   const isSummaryStep = currentStep === rawConfig?.length; // Summary is the 5th step
 
-  console.log(formData[currentFormConfig?.name || `section_${currentStep}`], "mmmmmmm")
-  console.log(formData, "formdata");
   return (
     <React.Fragment>
-      <Stepper
-        customSteps={steps}
-        currentStep={currentStep}
-        onStepClick={onStepperClick}
-        activeSteps={currentStep}
-      />
+      <Stepper customSteps={steps} currentStep={currentStep} onStepClick={onStepperClick} activeSteps={currentStep} />
       {isSummaryStep ? (
         <div className="summary-container">
-          <SummaryView
-            serviceCode={serviceCode}
-            formData={formData}
-            steps={steps}
-            t={t}
-          />
+          <SummaryView serviceCode={serviceCode} formData={formData} steps={steps} t={t} />
           <div className="flex justify-end mt-8">
-            <button
-              className="submit-btn"
-              onClick={() => onSubmit(formData)}
-            >
+            <button className="submit-btn" onClick={() => onSubmit(formData)}>
               {t(`${serviceCode}_SUBMIT`)}
             </button>
           </div>
@@ -177,25 +164,21 @@ const DigitDemoComponent = () => {
           label={currentStep === steps.length ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
           description={" "}
           text={" "}
-          config={[{
-            ...currentFormConfig,
-            body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
-          }]}
+          config={[
+            {
+              ...currentFormConfig,
+              body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
+            },
+          ]}
           fieldStyle={{ marginRight: 0 }}
           currentStep={currentStep}
-          defaultValues={{ ...formData[currentFormConfig?.name || `section_${currentStep}`] || {} }}
+          defaultValues={{ ...(formData[currentFormConfig?.name || `section_${currentStep}`] || {}) }}
           onSubmit={onSubmit}
           onPrevious={onPrevious}
         />
       )}
       {showToast && (
-        <Toast
-          style={{ zIndex: "10000" }}
-          error={showToast?.error}
-          label={t(showToast?.message)}
-          onClose={closeToast}
-          isDleteBtn={true}
-        />
+        <Toast style={{ zIndex: "10000" }} error={showToast?.error} label={t(showToast?.message)} onClose={closeToast} isDleteBtn={true} />
       )}
     </React.Fragment>
   );
