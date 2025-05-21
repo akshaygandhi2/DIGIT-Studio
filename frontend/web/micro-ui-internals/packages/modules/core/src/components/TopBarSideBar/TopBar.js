@@ -105,7 +105,7 @@ const TopBar = ({
 
       <img className="city" style={{width: "56px", height: "56px", margin:0, objectFit: "contain"}} src="https://egov-bucket.s3.af-south-1.amazonaws.com/new/logo+MVUH.png" alt="MVUH" />
 
-      <span style={{width: "20px" }}>
+      <span style={{width: "35px" }}>
         {
           // (cityDetails?.city?.ulbGrade ? (
           //   // TODO: title name is hardcoded, need to change it with i18Key
@@ -125,7 +125,10 @@ const TopBar = ({
           </p>
         )} */}
         {!mobileView && (
-          <div className={mobileView ? "right" : "flex-right right w-80 column-gap-15"} style={!loggedin ? { width: "30%" } : {}}>
+          <div className={mobileView ? "right" : "flex-right right w-80 column-gap-15"} style={{
+            minWidth: "fit-content",
+            ...( !loggedin ? { width: "30%" } : {} )
+          }}>
             {/* <div className="left">
               {!window.location.href.includes("employee/user/login") && !window.location.href.includes("employee/user/language-selection") && (
                 <ChangeCity dropdown={true} t={t} />
