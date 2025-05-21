@@ -147,11 +147,12 @@
   .language-button {
     display: flex;
     align-items: center;
-    padding: 8px 16px;
-    width: 92px;
+    padding: 0;
+    padding-left: 10px;
+    width: fit-content;
     height: 24px;
     gap: 32px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 400;
   }
 }
@@ -185,7 +186,7 @@
 
 .flex-right {
   @apply flex items-center justify-end;
-  min-width: 5.313rem;
+  min-width: fit-content !important;
 }
 
 video::-webkit-media-controls-panel {

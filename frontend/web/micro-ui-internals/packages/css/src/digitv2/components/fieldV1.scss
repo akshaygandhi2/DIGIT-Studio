@@ -12,7 +12,8 @@
     &.digit-form-card-subheader {
         font-size: theme(digitv2.fontSize.heading-xl.desktop);
         font-weight: theme(digitv2.fontWeight.bold);
-        line-height: 1.2
+        line-height: 1.2;
+        margin-bottom: 8px !important
     }
 
     &.label {

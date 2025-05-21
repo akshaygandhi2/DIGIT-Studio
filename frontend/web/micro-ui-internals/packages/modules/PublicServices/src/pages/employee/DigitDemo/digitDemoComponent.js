@@ -205,8 +205,8 @@ const DigitDemoComponent = () => {
           key={currentFormConfig?.name}
         heading={t(`${serviceCode}_HEADING`)}
           label={currentStep === steps.length ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
-          description={" "}
-          text={" "}
+          description={""}
+          text={""}
           config={[{
             ...currentFormConfig,
             body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),

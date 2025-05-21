@@ -74,6 +74,9 @@
 
   .main {
     padding-top: 88px;
+    padding-left: 40px;
+    padding-right: 40px;
+
   }
 
   .loginContainer {
@@ -471,9 +474,11 @@
     .main {
       display: flex;
       flex-direction: column;
-      padding-top: 80px;
-      margin-left: 72px;
-      width: calc(100%-83px);
+      padding-top: 88px;
+      width: 100%;
+      padding-left: 40px;
+      padding-right: 40px;
+      margin-left: 0 !important;
     }
 
     .citizen-home-container {
@@ -492,6 +497,11 @@
       height: 100%;
       display: flex;
       justify-content: center;
+
+      .ground-container {
+        padding-left: 40px !important;
+        padding-right: 40px !important;
+      }
     }
 
     .center-container {}
