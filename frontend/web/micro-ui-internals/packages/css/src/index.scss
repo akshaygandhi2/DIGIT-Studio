@@ -538,6 +538,14 @@ input[type="number"] {
     margin-top: 1rem;
     padding-left: 16px;
     padding-right: 16px;
+
+    .digit-popup-wrapper {
+      max-width: 500px !important;
+    }
+
+    .digit-popup-children-wrap{
+      padding: 40px 16px !important;
+    }
   }
 }
 @media (min-width: 780px) {
@@ -575,6 +583,10 @@ input[type="number"] {
 }
 .employee-app-wrapper {
   min-height: calc(100vh - 8em);
+
+  .ground-container {
+    padding: 0 !important;
+  }
 }
 
 .ws-custom-wrapper {

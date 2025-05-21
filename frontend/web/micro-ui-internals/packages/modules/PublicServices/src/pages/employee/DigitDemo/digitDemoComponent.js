@@ -162,8 +162,8 @@ const DigitDemoComponent = () => {
         <FormComposerV2
           heading={t(`${serviceCode}_HEADING`)}
           label={currentStep === steps.length ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
-          description={" "}
-          text={" "}
+          description={""}
+          text={""}
           config={[
             {
               ...currentFormConfig,
