@@ -100,7 +100,7 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
     formData.applicantDetails?.filter(Boolean)?.map((applicant, index) => ({
       type: "CITIZEN",
       name: applicant?.legalName,
-      mobileNumber: Number(applicant?.Telephone),
+      mobileNumber: Number(applicant?.telephone),
       emailId: applicant?.email || `user${index + 1}@example.com`,
       prefix: "253",
       active: true,
