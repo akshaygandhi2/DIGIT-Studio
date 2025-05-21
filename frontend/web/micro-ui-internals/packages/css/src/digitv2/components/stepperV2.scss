@@ -2,6 +2,7 @@
   @apply flex overflow-auto;
   min-height: 4rem;
   margin: theme(digitv2.spacers.spacer6);
+  margin-bottom: 32px !important;
 
 
   &.vertical {
