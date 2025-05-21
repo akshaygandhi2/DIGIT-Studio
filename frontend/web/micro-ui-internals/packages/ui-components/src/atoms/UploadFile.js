@@ -52,19 +52,14 @@ const UploadFile = (props) => {
       {/* {showHint && <p className="digit-cell-text">{t(props?.hintText)}</p>} */}
       <div style={{ display: "flex", gap: "12px" }}>
         <div style={{ height: "100%", width: "100%", maxWidth: "450px" }}>
-          <TextInput
-            type="text"
-            value={`${props?.uploadedFiles?.length} files uploaded`}
-            name="file"
-            disabled={true}
-          />
+          <TextInput type="text" value={`${props?.uploadedFiles?.length} ${t("CS_COMMON_FILES_UPLOADED")}`} name="file" disabled={true} />
         </div>
-      <div
-        className={`digit-upload-file ${props?.customClass ? props?.customClass : ""} ${
-          user_type === "employee" ? "" : "digit-upload-file-max-width"
-        } ${props.disabled ? " disabled" : ""}`}
-        style={props?.style}
-      >
+        <div
+          className={`digit-upload-file ${props?.customClass ? props?.customClass : ""} ${
+            user_type === "employee" ? "" : "digit-upload-file-max-width"
+          } ${props.disabled ? " disabled" : ""}`}
+          style={props?.style}
+        >
           <ButtonSelector
             theme="border"
             label={t("CS_COMMON_UPLOAD_FILE")}
@@ -73,26 +68,25 @@ const UploadFile = (props) => {
             type={props.buttonType}
             className="upload-button"
           />
-           <input
-          className={props.disabled ? "disabled" : "" + "digit-input-mirror-selector-button"}
-          ref={inpRef}
-          type="file"
-          id={props.id || `document-${getRandomId()}`}
-          name="file"
-          multiple={props.multiple}
-          accept={props.accept}
-          disabled={props.disabled}
-          onChange={(e) => props.onUpload(e)}
-          onClick={(event) => {
-            if (!props?.enableButton) {
-              event.preventDefault();
-            } else {
-              const { target = {} } = event || {};
-              target.value = "";
-            }
-          }}
-        />
-
+          <input
+            className={props.disabled ? "disabled" : "" + "digit-input-mirror-selector-button"}
+            ref={inpRef}
+            type="file"
+            id={props.id || `document-${getRandomId()}`}
+            name="file"
+            multiple={props.multiple}
+            accept={props.accept}
+            disabled={props.disabled}
+            onChange={(e) => props.onUpload(e)}
+            onClick={(event) => {
+              if (!props?.enableButton) {
+                event.preventDefault();
+              } else {
+                const { target = {} } = event || {};
+                target.value = "";
+              }
+            }}
+          />
         </div>
       </div>
       <div className="digit-upload-file-button-wrap">
@@ -112,7 +106,7 @@ const UploadFile = (props) => {
           })}
         </div>
         {/* {props?.uploadedFiles.length === 0 && <h2 className="digit-file-upload-status">{props.message}</h2>} */}
-        </div>
+      </div>
       {props.iserror && <ErrorMessage message={props.iserror} />}
       {props?.showHintBelow && <p className="digit-cell-text">{t(props?.hintText)}</p>}
     </div>
