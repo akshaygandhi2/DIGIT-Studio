@@ -190,12 +190,7 @@ const DigitDemoComponent = () => {
 
   return (
     <React.Fragment>
-      <Stepper
-        customSteps={steps}
-        currentStep={currentStep}
-        onStepClick={onStepperClick}
-        activeSteps={currentStep}
-      />
+      <Stepper customSteps={steps} currentStep={currentStep} onStepClick={onStepperClick} activeSteps={currentStep} />
       {isSummaryStep ? (
         <div className="summary-container">
           <SummaryView serviceCode={serviceCode} formData={formData} steps={steps} t={t} onSubmit={onSubmit} onPrevious={onPrevious} />
@@ -203,34 +198,28 @@ const DigitDemoComponent = () => {
       ) : (
         <FormComposerV2
           key={currentFormConfig?.name}
-        heading={t(`${serviceCode}_HEADING`)}
+          heading={t(`${serviceCode}_HEADING`)}
           label={currentStep === steps.length ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
-          description={""}
-          text={""}
-          config={[{
-            ...currentFormConfig,
-            body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
-          },
-        ]}
-        defaultValues={
-          currentFormConfig?.type === "multiChildForm"
-            ? { ...formData }
-            : { ...(formData[currentFormConfig?.name || `section_${currentStep}`] || {}) }
-        }
-        onSubmit={onSubmit}
-        onPrevious={onPrevious}
-        fieldStyle={{ marginRight: 0 }}
-        currentStep={currentStep}
-        onFormValueChange={onFormValueChange}
-      />
-      {showToast && (
-        <Toast
-          style={{ zIndex: "10000" }}
-          error={showToast?.error}
-          label={t(showToast?.message)}
-          onClose={closeToast}
-          isDleteBtn={true}
+          config={[
+            {
+              ...currentFormConfig,
+              body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
+            },
+          ]}
+          fieldStyle={{ marginRight: 0 }}
+          currentStep={currentStep}
+          defaultValues={
+            currentFormConfig?.type === "multiChildForm"
+              ? { ...formData }
+              : { ...(formData[currentFormConfig?.name || `section_${currentStep}`] || {}) }
+          }
+          onSubmit={onSubmit}
+          onPrevious={onPrevious}
+          onFormValueChange={onFormValueChange}
         />
+      )}
+      {showToast && (
+        <Toast style={{ zIndex: "10000" }} error={showToast?.error} label={t(showToast?.message)} onClose={closeToast} isDleteBtn={true} />
       )}
     </React.Fragment>
   );
