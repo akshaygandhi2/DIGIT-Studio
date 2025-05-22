@@ -79,7 +79,6 @@ const UploadAndDownloadDocumentHandler = ({
   const handleTemplateDownload = async ({ item, tenantId, t }) => {
     try {
       const state = tenantId;
-  
       if (item?.templatedownloadURL) {
         window.open(item.templatedownloadURL, "_blank");
       } else if (item?.templatePDFKey) {
@@ -93,9 +92,7 @@ const UploadAndDownloadDocumentHandler = ({
           applicationNumber: formData?.applicationNumber || applicationNo,
           pdfKey: templatePDFKey
         }
-      
         let url = `/studio-pdf/download/pdf/generatepdf`;
-  
         try {
           const response = await Digit.CustomService.getResponse({
             url,
@@ -107,7 +104,7 @@ const UploadAndDownloadDocumentHandler = ({
               Accept: "application/pdf",
             },
           });
-  
+
           downloadPdf(
             new Blob([response.data], { type: "application/pdf" }),
             `${applicationNo}.pdf`
@@ -116,18 +113,18 @@ const UploadAndDownloadDocumentHandler = ({
           console.error(err);
           Digit.Toast.error(t("TEMPLATE_DOWNLOAD_FAILED"));
         }
-  
+
         const dummyPayload = { sample: "value" };
         const response = await Digit.PaymentService.generatePdf(
           state,
           dummyPayload,
           item.templatePDFKey
         );
-  
+
         const fileStore = await Digit.PaymentService.printReciept(state, {
           fileStoreIds: response.filestoreIds[0],
         });
-  
+
         const fileUrl = fileStore?.[response.filestoreIds[0]];
         if (fileUrl) {
           window.open(fileUrl, "_blank");
@@ -137,7 +134,6 @@ const UploadAndDownloadDocumentHandler = ({
       console.error("Template download error", err);
     }
   };
-  
 
   let docData = data ? data?.MdmsRes?.DigitStudio?.DocumentConfig?.filter((ob) => ob?.module.toLowerCase() === moduleName)?.[0]?.actions : [];
 
@@ -151,11 +147,15 @@ const UploadAndDownloadDocumentHandler = ({
         {
           ...doc,
           templatePDFKey: "",
-          templatedownloadURL: ""
+          templatedownloadURL: "",
+          name: t(`${localePrefix}_${doc?.code}_UPLOAD`),
         }
       ];
     }
-    return [doc]; // Just the original if no keys present
+    return {
+      ...doc,
+      name: t(`${localePrefix}_${doc?.code}_UPLOAD`)
+    };// Just the original if no keys present
   });
   // if (!docConfig && flow !== "WORKFLOW") return null;
   // if(isLoading) return <Loader />;
@@ -222,7 +222,7 @@ const UploadAndDownloadDocumentHandler = ({
                   <span>{(item?.templatePDFKey || item?.templatedownloadURL) ? t(`${localePrefix}_${item?.code}_DOWNLOAD`) : t(`${localePrefix}_${item?.code}_UPLOAD`)}{item?.isMandatory && <span style={{ color: "#B91900" }}>*</span>}</span>
                 </CardLabel>
 
-              
+
               </div>
             )}
 

@@ -202,20 +202,7 @@ const DigitDemoComponent = () => {
       />
       {isSummaryStep ? (
         <div className="summary-container">
-          <SummaryView
-            serviceCode={serviceCode}
-            formData={formData}
-            steps={steps}
-            t={t}
-          />
-          <div className="flex justify-end mt-8">
-            <button
-              className="submit-btn"
-              onClick={() => onSubmit(formData)}
-            >
-              {t(`${serviceCode}_SUBMIT`)}
-            </button>
-          </div>
+          <SummaryView serviceCode={serviceCode} formData={formData} steps={steps} t={t} onSubmit={onSubmit} onPrevious={onPrevious} />
         </div>
       ) : (
         <FormComposerV2
