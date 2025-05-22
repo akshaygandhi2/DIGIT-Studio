@@ -23,7 +23,10 @@ const InboxService = () => {
           params: { tenantId: tenantId },
           headers: {
             "X-Tenant-Id": tenantId,
-            "auth-token" : window?.localStorage?.getItem("Employee.token"),
+            "auth-token":
+              Digit.UserService.getType() === "employee"
+                ? window?.localStorage?.getItem("Employee.token")
+                : window?.localStorage?.getItem("Citizen.token"),
           },
         });
 

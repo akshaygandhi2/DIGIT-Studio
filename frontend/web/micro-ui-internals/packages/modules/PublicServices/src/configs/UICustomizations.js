@@ -37,7 +37,10 @@ export const UICustomizations = {
           data.body.SearchCriteria.tenantId = tenantId;
         //   const filters = {};
           const custom = data.body.SearchCriteria.custom;
-          data.headers = {"X-Tenant-Id":tenantId, "auth-token" : window?.localStorage?.getItem("Employee.token"),}
+          data.headers = {"X-Tenant-Id":tenantId, "auth-token":
+              Digit.UserService.getType() === "employee"
+                ? window?.localStorage?.getItem("Employee.token")
+                : window?.localStorage?.getItem("Citizen.token"),}
           data.params = {tenantId : tenantId};
           data.method = "GET"
           data.config = { enabled : false   }
