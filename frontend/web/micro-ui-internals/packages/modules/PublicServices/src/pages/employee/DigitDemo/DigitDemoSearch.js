@@ -21,8 +21,10 @@ const DigitDemoSearch = () => {
     const fetchServiceData = async () => {
       try {
         const response = await axios.get("/public-service/v1/service", {
+          params: { tenantId : tenantId },
           headers: {
             "X-Tenant-Id": tenantId,
+            "auth-token" : window?.localStorage?.getItem("Employee.token"),
           },
         });
         setData(response.data);

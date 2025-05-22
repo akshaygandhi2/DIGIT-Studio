@@ -13,8 +13,10 @@ const modulePageComponent = ({}) => {
 
   const request = {
     url : "/public-service/v1/service",
+    params: { tenantId : tenantId},
     headers: {
-      "X-Tenant-Id" : tenantId
+      "X-Tenant-Id" : tenantId,
+      "auth-token" : window?.localStorage?.getItem("Employee.token"),
     },
     method: "GET",
   }

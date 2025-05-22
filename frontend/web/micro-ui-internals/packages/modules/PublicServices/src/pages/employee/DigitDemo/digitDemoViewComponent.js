@@ -20,11 +20,13 @@ const DigitDemoViewComponent = () => {
   const request = {
     url : `/public-service/v1/application/${queryStrings?.serviceCode|| "SVC-DEV-TRADELICENSE-NEWTL-04"}`,
     headers: {
-      "X-Tenant-Id" : tenantId
+      "X-Tenant-Id" : tenantId,
+      "auth-token" : window?.localStorage?.getItem("Employee.token"),
     },
     method: "GET",
     params: {
       "applicationNumber": queryStrings?.applicationNumber,
+      "tenantId" : tenantId
     }
   }
   const {isLoading, data} = Digit.Hooks.useCustomAPIHook(request);

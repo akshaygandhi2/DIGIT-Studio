@@ -18,7 +18,8 @@ import { useQuery, useQueryClient } from "react-query";
   const getServiceDetails = (formData) => {
     const excludedKeys = ["address", "applicantDetails", "uploadedDocs", "uploaded"];
     const validSections = Object.keys(formData).reduce((acc, key) => {
-      if (!excludedKeys.includes(key)) {
+      if (!excludedKeys.includes(key) &&
+      !key.startsWith("section_")) {
         acc[key] = formData[key];
       }
       return acc;

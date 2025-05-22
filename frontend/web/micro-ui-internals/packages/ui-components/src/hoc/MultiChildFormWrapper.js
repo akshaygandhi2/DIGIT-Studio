@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import FieldController from "./FieldController";
 import { Button } from "@egovernments/digit-ui-react-components";
 
-const MultiChildFormWrapper = ({ config, control, formData, setValue, getValues, errors, props }) => {
+const MultiChildFormWrapper = ({ config, control, formData, setValue, getValues, errors, props, defaultValues }) => {
   const [instances, setInstances] = useState([{ id: Date.now() }]);
 
   const addInstance = () => {
@@ -63,6 +63,7 @@ const MultiChildFormWrapper = ({ config, control, formData, setValue, getValues,
                 props={props}
                 formData={formData}
                 errors={errors}
+                defaultValues={defaultValues}
               />
               </div>
             );

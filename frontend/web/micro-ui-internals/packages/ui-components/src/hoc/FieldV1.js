@@ -56,6 +56,7 @@ const FieldV1 = ({
   controllerProps,
   control,
   variant,
+  defaultValues
 }) => {
   const { t } = useTranslation();
   let disableFormValidation = false;
@@ -547,6 +548,7 @@ const FieldV1 = ({
                               controllerProps.setValue(`${populators?.name}[${index}]`, {...updated[index]});
                             }
                           }}
+                          defaultValues={defaultValues}
                           parentName={`${populators?.name}[${index}]`}
                           inline={true}
                           hideHeader={true}

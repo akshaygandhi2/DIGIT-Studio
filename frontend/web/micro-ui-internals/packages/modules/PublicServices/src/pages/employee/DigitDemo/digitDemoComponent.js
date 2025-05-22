@@ -12,33 +12,40 @@ const DigitDemoComponent = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const [showToast, setShowToast] = useState(null);
-  const { module } = useParams();
-  const { service } = useParams();
-  let serviceCode = `${module.toUpperCase()}_${service.toUpperCase()}`;
-
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({});
+  const { module, service } = useParams();
+  const serviceCode = `${module.toUpperCase()}_${service.toUpperCase()}`;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const queryStrings = Digit.Hooks.useQueryParams();
+
+  // Load from localStorage
+  const savedStep = parseInt(localStorage.getItem("currentStep"), 10) || 1;
+  const savedFormData = JSON.parse(localStorage.getItem("formData") || "{}");
+
+  const [currentStep, setCurrentStep] = useState(savedStep);
+  const [formData, setFormData] = useState(savedFormData);
+  const [sessionData, setSessionData] = useState(savedFormData);
 
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
     body: {
       MdmsCriteria: {
         tenantId: tenantId,
-        schemaCode: "Studio.ServiceConfiguration"
+        schemaCode: "Studio.ServiceConfiguration",
       },
     },
-    //changeQueryName: "sorOverhead"
   };
-  const {isLoading: moduleListLoading, data} = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
-  let config = data?.mdms?.filter((item) => item?.uniqueIdentifier.toLowerCase() === `${module}.${service}`.toLowerCase())[0];
-  let Updatedconfig = {
-    ServiceConfiguration : [config?.data],
-    tenantId: tenantId,
-    module: module,
-  }
+  const { isLoading: moduleListLoading, data } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+
+  const config = data?.mdms?.find((item) =>
+    item?.uniqueIdentifier.toLowerCase() === `${module}.${service}`.toLowerCase()
+  );
+
+  const Updatedconfig = {
+    ServiceConfiguration: [config?.data],
+    tenantId,
+    module,
+  };
 
   // const configMap = {
   //   pgr: serviceConfigPGR,
@@ -46,11 +53,11 @@ const DigitDemoComponent = () => {
   // };
   // console.log(configMap[module],"configMap")
 
-  const rawConfig = generateFormConfig(Updatedconfig, module.toUpperCase(),service?.toUpperCase());
+  const rawConfig = generateFormConfig(Updatedconfig, module.toUpperCase(), service?.toUpperCase());
+  console.log(rawConfig,"rawconfig");
   const steps = rawConfig.map((config) => config.head || config.label || "Untitled Section");
-
   const currentFormConfig = rawConfig[currentStep - 1];
-  let schemaCode = queryStrings?.serviceCode || "SVC-DEV-TRADELICENSE-NEWTL-04";
+  const schemaCode = queryStrings?.serviceCode || "SVC-DEV-TRADELICENSE-NEWTL-04";
 
   const reqCreate = {
     url: `/public-service/v1/application/${schemaCode}`,
@@ -65,31 +72,46 @@ const DigitDemoComponent = () => {
 
   const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCreate);
 
+  const persistData = (updatedFormData, updatedStep) => {
+    localStorage.setItem("formData", JSON.stringify(updatedFormData));
+    localStorage.setItem("currentStep", updatedStep.toString());
+    sessionStorage.setItem("formData", JSON.stringify(updatedFormData));
+    setSessionData(updatedFormData);
+  };
+
   const onSubmit = async (data) => {
     const sectionName = currentFormConfig.name || `section_${currentStep}`;
-  
-    const updatedFormData = currentFormConfig?.type === "multiChildForm" || currentFormConfig?.type === "documents" ? { ...formData, ...data } : { ...formData, [sectionName]: data }; 
-    setFormData(updatedFormData);
+    const updatedFormData =
+      currentFormConfig?.type === "multiChildForm" || currentFormConfig?.type === "documents"
+        ? { ...formData, ...data }
+        : { ...formData, [sectionName]: data };
 
     const isLastStep = currentStep === rawConfig.length;
 
+    setFormData(updatedFormData);
+    persistData(updatedFormData, currentStep);
     if (!isLastStep) {
-      setCurrentStep((prev) => prev + 1);
+      const nextStep = currentStep + 1;
+      setCurrentStep(nextStep);
+      persistData(updatedFormData, nextStep);
     } else {
-      // Final submit
+      // Final Submit
       await mutation.mutate(
         {
           url: `/public-service/v1/application/${schemaCode}`,
           params: {},
           headers: { "x-tenant-id": tenantId },
           method: "POST",
-          body: transformToApplicationPayload(updatedFormData,Updatedconfig,service,tenantId),
+          body: transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId),
           config: {
             enable: true,
           },
         },
         {
           onSuccess: (data) => {
+            localStorage.removeItem("formData");
+            localStorage.removeItem("currentStep");
+            sessionStorage.removeItem("formData");
             history.push({
               pathname: `/${window.contextPath}/employee/publicservices/${module}/${service}/response`,
               search: "?isSuccess=true",
@@ -97,7 +119,7 @@ const DigitDemoComponent = () => {
                 message: "Application Created Successfully",
                 showID: true,
                 applicationNumber: data?.Application?.applicationNumber,
-                redirectionUrl :  `/${window.contextPath}/employee/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
+                redirectionUrl: `/${window.contextPath}/employee/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
               },
             });
           },
@@ -117,10 +139,27 @@ const DigitDemoComponent = () => {
   };
 
   const onStepperClick = (stepIndex) => {
-    const clickedStepIndex = stepIndex + 1; // because currentStep is 1-based
+    const clickedStepIndex = stepIndex + 1;
     const clickedHead = rawConfig[stepIndex].name;
     if (Object.keys(formData).includes(clickedHead)) {
       setCurrentStep(clickedStepIndex);
+      localStorage.setItem("currentStep", clickedStepIndex.toString());
+    }
+  };
+
+  const onFormValueChange = (_, updatedData) => {
+    const sectionName = currentFormConfig.name || `section_${currentStep}`;
+    const updatedSectionData = updatedData[sectionName] || updatedData;
+
+    const updatedFormData = { ...formData, [sectionName]: updatedSectionData };
+
+    // Compare current with session data
+    const sessionSectionData = sessionData?.[sectionName];
+    const hasChanged = JSON.stringify(sessionSectionData) !== JSON.stringify(updatedSectionData);
+
+    if (hasChanged) {
+      setFormData(updatedFormData);
+      persistData(updatedFormData, currentStep);
     }
   };
 
@@ -128,13 +167,10 @@ const DigitDemoComponent = () => {
     setShowToast(false);
   };
 
-
   if (moduleListLoading) {
     return <Loader />;
   }
 
-  console.log(formData[currentFormConfig?.name || `section_${currentStep}`],"mmmmmmm")
-  console.log(formData,"formdata");
   return (
     <React.Fragment>
       <Stepper
@@ -146,24 +182,26 @@ const DigitDemoComponent = () => {
       <FormComposerV2
         heading={t(`${serviceCode}_HEADING`)}
         label={currentStep === steps.length ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
-        description={" "}
-        text={" "}
-        config={[{
-          ...currentFormConfig,
-          body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
-        }]}
-        defaultValues={{...formData[currentFormConfig?.name || `section_${currentStep}`] || {}}}
+        config={[
+          {
+            ...currentFormConfig,
+            body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
+          },
+        ]}
+        defaultValues={currentFormConfig?.type === "multiChildForm"? {...formData} : { ...formData[currentFormConfig?.name || `section_${currentStep}`] || {} }}
         onSubmit={onSubmit}
         fieldStyle={{ marginRight: 0 }}
+        onFormValueChange={onFormValueChange}
       />
-      {showToast &&
+      {showToast && (
         <Toast
           style={{ zIndex: "10000" }}
           error={showToast?.error}
           label={t(showToast?.message)}
           onClose={closeToast}
           isDleteBtn={true}
-        />}
+        />
+      )}
     </React.Fragment>
   );
 };

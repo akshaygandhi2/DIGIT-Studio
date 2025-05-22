@@ -17,6 +17,7 @@ function FieldController(args) {
     control,
     props,
     errors,
+    defaultValues,
     controllerProps,
   } = args;
   let { apiDetails } = props;
@@ -71,6 +72,7 @@ function FieldController(args) {
         sectionFormCategory={sectionFormCategory}
         formData={formData}
         selectedFormCategory={selectedFormCategory}
+        defaultValues={defaultValues}
         onChange={(val) => {
       console.log("FieldController - New Value:", val);
       console.log(onChange,"onchange");

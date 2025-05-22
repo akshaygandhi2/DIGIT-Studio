@@ -124,6 +124,7 @@ export const FormComposer = (props) => {
       props: props,
       errors: errors,
       control:control,
+      defaultValues: props?.defaultValues,
       controllerProps: {
         register,
         handleSubmit,
@@ -233,6 +234,7 @@ export const FormComposer = (props) => {
             getValues={getValues}
             errors={errors}
             props={props}
+            defaultValues={props?.defaultValues}
           />
         )}
         {section.type !== "multiChildForm" && section.body.map((field, index) => {
