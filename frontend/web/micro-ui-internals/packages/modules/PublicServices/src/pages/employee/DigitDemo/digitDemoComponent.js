@@ -194,17 +194,18 @@ const DigitDemoComponent = () => {
         <FormComposerV2
           heading={t(`${serviceCode}_HEADING`)}
           label={currentStep === steps.length ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
-          description={" "}
-          text={" "}
-          config={[{
-            ...currentFormConfig,
-            body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
-          }]}
+          config={[
+            {
+              ...currentFormConfig,
+              body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
+            },
+          ]}
           fieldStyle={{ marginRight: 0 }}
           currentStep={currentStep}
-          defaultValues={{ ...formData[currentFormConfig?.name || `section_${currentStep}`] || {} }}
+          defaultValues={currentFormConfig?.type === "multiChildForm"? {...formData} : { ...formData[currentFormConfig?.name || `section_${currentStep}`] || {} }}
           onSubmit={onSubmit}
           onPrevious={onPrevious}
+          onFormValueChange={onFormValueChange}
         />
       )}
       {showToast && (
