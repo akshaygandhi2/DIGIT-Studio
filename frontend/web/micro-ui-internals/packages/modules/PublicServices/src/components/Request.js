@@ -139,7 +139,7 @@ export const Request = async ({
       url: _url,
       data: multipartData.data,
       params,
-      headers: { "Content-Type": "multipart/form-data", "auth-token": Digit.UserService.getUser()?.access_token || null },
+      headers: { "Content-Type": "multipart/form-data"},
     });
     return multipartFormDataRes;
   }
