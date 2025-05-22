@@ -16,7 +16,7 @@ const modulePageComponent = ({}) => {
     params: { tenantId : tenantId},
     headers: {
       "X-Tenant-Id" : tenantId,
-      "auth-token" : window?.localStorage?.getItem("Employee.token"),
+      "auth-token" : Digit.SessionStorage.get("User")?.access_token,
     },
     method: "GET",
   }
