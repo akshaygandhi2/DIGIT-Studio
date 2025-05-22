@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"os"
+
 	//"crypto/internal/fips140/edwards25519/field"
 	"encoding/json"
 	"log"
@@ -25,7 +26,7 @@ type ApplicationController struct {
 	indexerService     *service.IndexerService
 }
 
-func NewApplicationController(service *service.ApplicationService, workflowIntegrator *service.WorkflowIntegrator, individualService *service.IndividualService, enrichmentService *service.EnrichmentService, smsService *service.SMSService,indexerService *service.IndexerService) *ApplicationController {
+func NewApplicationController(service *service.ApplicationService, workflowIntegrator *service.WorkflowIntegrator, individualService *service.IndividualService, enrichmentService *service.EnrichmentService, smsService *service.SMSService, indexerService *service.IndexerService) *ApplicationController {
 	return &ApplicationController{service: service, workflowIntegrator: workflowIntegrator, individualService: individualService, enrichmentService: enrichmentService, smsService: smsService, indexerService: indexerService}
 }
 
@@ -56,23 +57,23 @@ func (c *ApplicationController) CreateApplicationHandler(w http.ResponseWriter, 
 	if req.Application.ServiceCode == "" {
 		req.Application.ServiceCode = serviceCode
 	}
-	mdmsSearch := service.NewMDMSService(nil)
-	//MDMS Search
-	fields := mdmsSearch.MdmsSearchWithFilter(req)
+	// mdmsSearch := service.NewMDMSService(nil)
+	// //MDMS Search
+	// fields := mdmsSearch.MdmsSearchWithFilter(req)
 
-	// Print only the fields part
-	// fmt.Printf("Fields: %+v\n", fields)
+	// // Print only the fields part
+	// // fmt.Printf("Fields: %+v\n", fields)
 
-	// Validate the service details against the fields schema
-	if err := mdmsSearch.ValidateServiceDetailsWithSchema(req, fields); err != nil {
-		utils.WriteErrorResponse(w, http.StatusBadRequest, "Service details validation failed: "+err.Error())
-		return
-	}
+	// // Validate the service details against the fields schema
+	// if err := mdmsSearch.ValidateServiceDetailsWithSchema(req, fields); err != nil {
+	// 	utils.WriteErrorResponse(w, http.StatusBadRequest, "Service details validation failed: "+err.Error())
+	// 	return
+	// }
 
-	req, err = c.enrichmentService.EnrichApplicationsWithIdGen(req,"application")
+	req, err = c.enrichmentService.EnrichApplicationsWithIdGen(req, "application")
 	if err != nil {
 		utils.WriteErrorResponse(w, http.StatusBadRequest, "Enrichment failed: "+err.Error())
-	    return
+		return
 	}
 	log.Println(req)
 	for i := range req.Application.Applicants {
@@ -137,13 +138,13 @@ func (c *ApplicationController) CreateApplicationHandler(w http.ResponseWriter, 
 	}
 	_, err2 := c.smsService.SendSMS(req, req.Application.TenantId, req.Application.Applicants)
 	if err2 != nil {
-		log.Printf("error sending sms  %v",err2)
+		log.Printf("error sending sms  %v", err2)
 	}
 	log.Printf("ProcessInstance enriched: %+v", res.Application.ProcessInstance)
 
-    err = c.indexerService.SendRequestToIndexerForParallelWorkflow(res, req.RequestInfo, os.Getenv("SAVE_PUBLIC_SERVICE_APPLICATION_TOPIC_INDEXER"))
+	err = c.indexerService.SendRequestToIndexerForParallelWorkflow(res, req.RequestInfo, os.Getenv("SAVE_PUBLIC_SERVICE_APPLICATION_TOPIC_INDEXER"))
 	if err != nil {
-		log.Printf("error sending to indexer topic   %v",err2)
+		log.Printf("error sending to indexer topic   %v", err2)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
@@ -181,7 +182,7 @@ func (c *ApplicationController) SearchApplicationHandler(w http.ResponseWriter, 
 	businessService := r.URL.Query().Get("businessService")
 	status := r.URL.Query().Get("status")
 	applicationNumber := r.URL.Query().Get("applicationNumber")
-	userId:=r.URL.Query().Get("userId")
+	userId := r.URL.Query().Get("userId")
 	sortBy := r.URL.Query().Get("sortBy")
 	if limitStr := r.URL.Query().Get("limit"); limitStr != "" {
 		if limit, err := strconv.Atoi(limitStr); err == nil {
@@ -209,14 +210,14 @@ func (c *ApplicationController) SearchApplicationHandler(w http.ResponseWriter, 
 		criteria.SearchCriteria.ApplicationNumber = applicationNumber
 	}
 	if userId != "" {
-		criteria.SearchCriteria.UserId=userId
+		criteria.SearchCriteria.UserId = userId
 	}
 	if idsParam := r.URL.Query().Get("ids"); idsParam != "" {
 		criteria.SearchCriteria.Ids = strings.Split(idsParam, ",")
 	}
 	log.Println("inside search", criteria.SearchCriteria)
 	ctx := context.Background()
-	res, err := c.service.SearchApplication(ctx, criteria.SearchCriteria,AuthToken)
+	res, err := c.service.SearchApplication(ctx, criteria.SearchCriteria, AuthToken)
 	if err != nil {
 		utils.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
@@ -236,7 +237,7 @@ func (c *ApplicationController) SearchApplicationHandler(w http.ResponseWriter, 
 func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, r *http.Request) {
 	serviceCode := mux.Vars(r)["serviceCode"]
 
-	if serviceCode == ""  {
+	if serviceCode == "" {
 		utils.WriteErrorResponse(w, http.StatusBadRequest, "Path variable 'serviceCode' is required")
 		return
 	}
@@ -249,9 +250,9 @@ func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, 
 
 	AuthToken := r.Header.Get("auth-token")
 	if AuthToken == "" {
-		log.Println("auth-token",AuthToken)
+		log.Println("auth-token", AuthToken)
 	}
-    
+
 	var req model.ApplicationRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -269,7 +270,7 @@ func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, 
 		req.Application.ServiceCode = serviceCode
 	}
 	ctx := context.Background()
-	req,err =c.enrichmentService.EnrichApplicationsWithDemand(req)
+	req, err = c.enrichmentService.EnrichApplicationsWithDemand(req)
 	if err != nil {
 		log.Printf("Deamnd Creation failed: %v", err)
 		utils.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
@@ -290,17 +291,17 @@ func (c *ApplicationController) UpdateApplicationHandler(w http.ResponseWriter, 
 	log.Printf("ProcessInstance enriched: %+v", res.Application.ProcessInstance)
 	_, err2 := c.smsService.SendSMS(req, req.Application.TenantId, req.Application.Applicants)
 	if err2 != nil {
-		log.Printf("error sending sms  %v",err2)
+		log.Printf("error sending sms  %v", err2)
 	}
 	err = c.indexerService.SendRequestToIndexerForParallelWorkflow(res, req.RequestInfo, os.Getenv("UPDATE_PUBLIC_SERVICE_APPLICATION_TOPIC_INDEXER"))
 	if err != nil {
-		log.Printf("error sending to indexer topic   %v",err2)
+		log.Printf("error sending to indexer topic   %v", err2)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
 }
 
-func(c *ApplicationController) SearchMyApplicationHandler(w http.ResponseWriter,r *http.Request){
+func (c *ApplicationController) SearchMyApplicationHandler(w http.ResponseWriter, r *http.Request) {
 	var criteria model.SearchRequest
 
 	tenantID := r.Header.Get("X-Tenant-Id")
@@ -323,7 +324,7 @@ func(c *ApplicationController) SearchMyApplicationHandler(w http.ResponseWriter,
 	businessService := r.URL.Query().Get("businessService")
 	status := r.URL.Query().Get("status")
 	applicationNumber := r.URL.Query().Get("applicationNumber")
-	userId:=r.URL.Query().Get("userId")
+	userId := r.URL.Query().Get("userId")
 	sortBy := r.URL.Query().Get("sortBy")
 	if limitStr := r.URL.Query().Get("limit"); limitStr != "" {
 		if limit, err := strconv.Atoi(limitStr); err == nil {
@@ -351,14 +352,14 @@ func(c *ApplicationController) SearchMyApplicationHandler(w http.ResponseWriter,
 		criteria.SearchCriteria.ApplicationNumber = applicationNumber
 	}
 	if userId != "" {
-		criteria.SearchCriteria.UserId=userId
+		criteria.SearchCriteria.UserId = userId
 	}
 	if idsParam := r.URL.Query().Get("ids"); idsParam != "" {
 		criteria.SearchCriteria.Ids = strings.Split(idsParam, ",")
 	}
 	log.Println("inside search", criteria.SearchCriteria)
 	ctx := context.Background()
-	res, err := c.service.SearchApplication(ctx, criteria.SearchCriteria,AuthToken)
+	res, err := c.service.SearchApplication(ctx, criteria.SearchCriteria, AuthToken)
 	if err != nil {
 		utils.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 		return
@@ -393,4 +394,3 @@ func (c *ApplicationController) CalculateHandler(w http.ResponseWriter, r *http.
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
 }
-
