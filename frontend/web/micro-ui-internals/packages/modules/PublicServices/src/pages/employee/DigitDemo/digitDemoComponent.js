@@ -71,10 +71,7 @@ const DigitDemoComponent = () => {
   const onSubmit = async (data) => {
     const sectionName = currentFormConfig.name || `section_${currentStep}`;
 
-    const updatedFormData =
-      currentFormConfig?.type === "multiChildForm" || currentFormConfig?.type === "documents"
-        ? { ...formData, ...data }
-        : { ...formData, [sectionName]: data };
+    const updatedFormData = currentFormConfig?.type === "multiChildForm" || currentFormConfig?.type === "documents" ? { ...formData, ...data } : { ...formData, [sectionName]: data };
     setFormData(updatedFormData);
 
     const isLastStep = currentStep === rawConfig.length;
@@ -146,39 +143,47 @@ const DigitDemoComponent = () => {
 
   const isSummaryStep = currentStep === rawConfig?.length; // Summary is the 5th step
 
+  const isSummaryStep = currentStep === rawConfig?.length; // Summary is the 5th step
+
+  console.log(formData[currentFormConfig?.name || `section_${currentStep}`], "mmmmmmm")
+  console.log(formData, "formdata");
   return (
     <React.Fragment>
-      <Stepper customSteps={steps} currentStep={currentStep} onStepClick={onStepperClick} activeSteps={currentStep} />
+      <Stepper
+        customSteps={steps}
+        currentStep={currentStep}
+        onStepClick={onStepperClick}
+        activeSteps={currentStep}
+      />
       {isSummaryStep ? (
         <div className="summary-container">
-          <SummaryView serviceCode={serviceCode} formData={formData} steps={steps} t={t} />
-          <div className="flex justify-end mt-8">
-            <button className="submit-btn" onClick={() => onSubmit(formData)}>
-              {t(`${serviceCode}_SUBMIT`)}
-            </button>
-          </div>
+          <SummaryView serviceCode={serviceCode} formData={formData} steps={steps} t={t} onSubmit={onSubmit} onPrevious={onPrevious} />
         </div>
       ) : (
         <FormComposerV2
           heading={t(`${serviceCode}_HEADING`)}
           label={currentStep === steps.length ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
-          description={""}
-          text={""}
-          config={[
-            {
-              ...currentFormConfig,
-              body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
-            },
-          ]}
+          description={" "}
+          text={" "}
+          config={[{
+            ...currentFormConfig,
+            body: currentFormConfig?.body?.filter((a) => !a.hideInEmployee),
+          }]}
           fieldStyle={{ marginRight: 0 }}
           currentStep={currentStep}
-          defaultValues={{ ...(formData[currentFormConfig?.name || `section_${currentStep}`] || {}) }}
+          defaultValues={{ ...formData[currentFormConfig?.name || `section_${currentStep}`] || {} }}
           onSubmit={onSubmit}
           onPrevious={onPrevious}
         />
       )}
       {showToast && (
-        <Toast style={{ zIndex: "10000" }} error={showToast?.error} label={t(showToast?.message)} onClose={closeToast} isDleteBtn={true} />
+        <Toast
+          style={{ zIndex: "10000" }}
+          error={showToast?.error}
+          label={t(showToast?.message)}
+          onClose={closeToast}
+          isDleteBtn={true}
+        />
       )}
     </React.Fragment>
   );
