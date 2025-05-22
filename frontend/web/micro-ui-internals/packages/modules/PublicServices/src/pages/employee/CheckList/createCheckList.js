@@ -19,7 +19,7 @@ const CreateCheckList = () => {
 
   const [config, setConfig] = useState(null);
 
-   const closeToast = () => {
+  const closeToast = () => {
     setTimeout(() => {
       setShowToast(null)
     }, 5000);
@@ -28,8 +28,6 @@ const CreateCheckList = () => {
   setTimeout(() => {
     setShowToast(null);
   }, 20000);
-
-
 
   const def_search_request = {
     url: "/health-service-request/service/definition/v1/_search",
@@ -43,6 +41,7 @@ const CreateCheckList = () => {
   }
   const smutation = Digit.Hooks.useCustomAPIMutationHook(def_search_request);
 
+  //application creation request
   const create_request = {
     url: "/health-service-request/service/v1/_create",
     params: {},
@@ -233,7 +232,7 @@ const CreateCheckList = () => {
       ) : (
         <Loader />
       )}
-      {showToast && (
+       {showToast && (
         <Toast
           type={showToast?.type}
           label={t(showToast?.label)}
