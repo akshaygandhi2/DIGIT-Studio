@@ -23,7 +23,7 @@ export const PublicServicesModule = ({ stateCode, userType, tenants }) => {
           params: { tenantId },
           headers: {
             "X-Tenant-Id": tenantId,
-            "auth-token": window?.localStorage?.getItem("Employee.token"),
+            "auth-token": Digit.SessionStorage.get("User")?.access_token,
           },
         });
         setServiceData(response.data);

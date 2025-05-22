@@ -22,7 +22,7 @@ const DigitDemoViewComponent = () => {
     url : `/public-service/v1/application/${queryStrings?.serviceCode|| "SVC-DEV-TRADELICENSE-NEWTL-04"}`,
     headers: {
       "X-Tenant-Id" : tenantId,
-      "auth-token" : window?.localStorage?.getItem("Employee.token"),
+      "auth-token" : Digit.SessionStorage.get("User")?.access_token,
     },
     method: "GET",
     params: {
