@@ -111,6 +111,7 @@ useEffect(() => {
           applicationNo={response?.applicationNumber}
           tenantId={tenantId}
           applicationDetails={response}
+          serviceConfig={serviceConfig}
           url={`/public-service/v1/application/SVC-DEV-TRADELICENSE-NEWTL-04`}
           //setStateChanged={setStateChanged}
           isDisabled={!selectedBusinessService}

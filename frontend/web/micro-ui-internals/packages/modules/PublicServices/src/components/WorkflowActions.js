@@ -134,7 +134,7 @@ const WorkflowActions = ({ businessService, tenantId, applicationNo, forcedActio
     setSelectedAction(action);
     if(action.action === "PAY")
     {
-      history.push(`/${window.contextPath}/employee/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${businessService}`, {
+      history.push(`/${window.contextPath}/employee/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${props?.serviceConfig?.data?.bill?.BusinessService?.code}`, {
         redirectionUrl :  `/${window.contextPath}/employee/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}`,
 
       });

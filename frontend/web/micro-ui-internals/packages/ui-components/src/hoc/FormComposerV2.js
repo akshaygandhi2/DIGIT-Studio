@@ -372,11 +372,11 @@ export const FormComposer = (props) => {
       {props.submitInForm && (
         <SubmitBar label={t(props.label)} style={{ width:"100%",...props?.buttonStyle }} submit="submit" disabled={isDisabled} className="w-full"/>
       )}
-      {/* {props.secondaryActionLabel && (
+      {props.secondaryActionLabel && (
         <div className="primary-label-btn" style={{ margin: "20px auto 0 auto" }} onClick={onSecondayActionClick}>
           {props.secondaryActionLabel}
         </div>
-      )} */}
+      )}
     </React.Fragment>
   );
 
@@ -429,9 +429,9 @@ export const FormComposer = (props) => {
           )}
         </HorizontalNav>
       )}
-      {!props.submitInForm && props.label && props?.secondaryActionLabel && (
+      {!props.submitInForm && props.label && (
         <Footer>
-          <SubmitBar className="digit-formcomposer-submitbar" submit="button" label={t(props?.secondaryActionLabel)} onClick={props?.onSecondayActionClick} />
+          {props?.draftLabel && (  <SubmitBar className="digit-formcomposer-submitbar" submit="button" label={t(props?.draftLabel)} onClick={props?.onSecondayActionClick} />)}
           <SubmitBar label={t(props.label)} className="digit-formcomposer-submitbar" submit="submit" disabled={isDisabled} />
           {props.onSkip && props.showSkip && <ActionLinks style={props?.skipStyle} label={t(`CS_SKIP_CONTINUE`)} onClick={props.onSkip} />}
         </Footer>
