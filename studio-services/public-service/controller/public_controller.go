@@ -43,7 +43,7 @@ func (c *PublicController) CreateServiceHandler(w http.ResponseWriter, r *http.R
 
     req, err = c.enrichmentService.EnrichServiceWithIdGen(req,"service")
 	if err != nil {
-		utils.WriteErrorResponse(w, http.StatusBadRequest, "Enrichment failed: "+err.Error())
+		utils.WriteErrorResponse(w, http.StatusInternalServerError, "Enrichment failed: "+err.Error())
 	    return
 	}
 	ctx := context.Background()

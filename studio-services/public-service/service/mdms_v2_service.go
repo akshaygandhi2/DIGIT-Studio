@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	RoleActionCreatePath = "/egov-mdms-service/v2/_create/ACCESSCONTROL-ROLEACTIONS.roleactions"
-	ActionTestCreatePath = "/egov-mdms-service/v2/_create/ACCESSCONTROL-ACTIONS-TEST.actions-test"
+	RoleActionCreatePath = "egov-mdms-service/v2/_create/ACCESSCONTROL-ROLEACTIONS.roleactions"
+	ActionTestCreatePath = "egov-mdms-service/v2/_create/ACCESSCONTROL-ACTIONS-TEST.actions-test"
 )
 
 type MDMSV2Service struct {
