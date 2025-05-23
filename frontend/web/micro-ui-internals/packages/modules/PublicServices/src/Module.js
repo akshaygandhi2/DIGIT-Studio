@@ -23,8 +23,7 @@ export const PublicServicesModule = ({ stateCode, userType, tenants }) => {
           params: { tenantId },
           headers: {
             "X-Tenant-Id": tenantId,
-            "auth-token":
-              Digit.UserService.getUser()?.access_token,
+            "auth-token": Digit.UserService.getUser()?.access_token,
           },
         });
         setServiceData(response.data);
@@ -63,7 +62,7 @@ export const PublicServicesModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
   PublicServicesModule,
-  PublicServicesCard,
+  // PublicServicesCard,
 };
 
 export const initPublicServiceComponents = () => {

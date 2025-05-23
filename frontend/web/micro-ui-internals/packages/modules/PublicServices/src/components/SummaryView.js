@@ -6,7 +6,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
     try {
       const tenantId = Digit.ULBService.getCurrentTenantId();
       const response = await Digit.UploadServices.Filefetch([fileStoreId], tenantId);
-      
+
       if (response?.data?.[fileStoreId]) {
         window.open(response.data[fileStoreId], "_blank");
       }
@@ -43,11 +43,20 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
         <div className="section-content">
           {Object.entries(data[0]).map(([key, value]) => {
             const renderedValue = renderValue(value);
-            const label = renderedValue === "checked" ? <div style={{ fontSize: "16px", marginLeft:'10px' }} className="field-label">{t(serviceCode + "_" + key.toUpperCase())}</div> : <div style={{ fontSize: "19px" }} className="field-label">{t(serviceCode + "_" + key.toUpperCase())}</div>;
+            const label =
+              renderedValue === "checked" ? (
+                <div style={{ fontSize: "16px", marginLeft: "10px" }} className="field-label">
+                  {t(serviceCode + "_" + key.toUpperCase())}
+                </div>
+              ) : (
+                <div style={{ fontSize: "19px" }} className="field-label">
+                  {t(serviceCode + "_" + key.toUpperCase())}
+                </div>
+              );
             const field = <div className="field-value">{renderedValue}</div>;
 
             return (
-              <div key={key} >
+              <div key={key}>
                 {renderedValue === "checked" ? (
                   <div className="fields-container">
                     <span
@@ -60,13 +69,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
                         marginRight: "8px",
                       }}
                     >
-                      <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clipPath="url(#clip0_105_1500)">
                           <path
                             d="M9.00016 16.1698L4.83016 11.9998L3.41016 13.4098L9.00016 18.9998L21.0002 6.99984L19.5902 5.58984L9.00016 16.1698Z"
@@ -83,7 +86,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
                     {label}
                   </div>
                 ) : (
-                    <div style={{width:'50%'}} className="fields-container">
+                  <div style={{ width: "50%" }} className="fields-container">
                     {label}
                     {field}
                   </div>
@@ -95,7 +98,6 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
       </div>
     );
   };
-
 
   const renderDocuments = (documents) => {
     if (!documents) return null;
@@ -109,28 +111,34 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
 
             return (
               <div key={docType} className="fields-container">
-                <div className="field-label" style={{width:'50%'}}>{t(docType)}</div>
+                <div className="field-label" style={{ width: "50%" }}>
+                  {t(docType)}
+                </div>
                 <div className="field-value">
                   {files.map(([fileName, fileData], index) => (
                     <div key={index} className="document-item">
                       <svg width="27" height="34" viewBox="0 0 27 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16.8337 0.333374H3.50033C1.66699 0.333374 0.183659 1.83337 0.183659 3.66671L0.166992 30.3334C0.166992 32.1667 1.65033 33.6667 3.48366 33.6667H23.5003C25.3337 33.6667 26.8337 32.1667 26.8337 30.3334V10.3334L16.8337 0.333374ZM20.167 27H6.83366V23.6667H20.167V27ZM20.167 20.3334H6.83366V17H20.167V20.3334ZM15.167 12V2.83337L24.3337 12H15.167Z" fill="#505A5F" />
+                        <path
+                          d="M16.8337 0.333374H3.50033C1.66699 0.333374 0.183659 1.83337 0.183659 3.66671L0.166992 30.3334C0.166992 32.1667 1.65033 33.6667 3.48366 33.6667H23.5003C25.3337 33.6667 26.8337 32.1667 26.8337 30.3334V10.3334L16.8337 0.333374ZM20.167 27H6.83366V23.6667H20.167V27ZM20.167 20.3334H6.83366V17H20.167V20.3334ZM15.167 12V2.83337L24.3337 12H15.167Z"
+                          fill="#505A5F"
+                        />
                       </svg>
 
                       <span className="file-name">{fileName}</span>
                       <div className="footer-buttons-wrapper">
-                        <button 
-                          style={{ width: 'auto', marginLeft: 'auto' }} 
-                          className="digit-submit-bar previous-btn" 
+                        <button
+                          style={{ width: "auto", marginLeft: "auto" }}
+                          className="digit-submit-bar previous-btn"
                           onClick={() => downloadFile(fileData?.fileStoreId?.fileStoreId)}
                         >
                           <svg width="12" height="15" viewBox="0 0 12 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M11.8337 5.5H8.50033V0.5H3.50033V5.5H0.166992L6.00033 11.3333L11.8337 5.5ZM0.166992 13V14.6667H11.8337V13H0.166992Z" fill="#006769" />
+                            <path
+                              d="M11.8337 5.5H8.50033V0.5H3.50033V5.5H0.166992L6.00033 11.3333L11.8337 5.5ZM0.166992 13V14.6667H11.8337V13H0.166992Z"
+                              fill="#006769"
+                            />
                           </svg>
 
-                          <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#006769" }}>
-                            {t(`${serviceCode}_DOWNLOAD`)}
-                          </h2>
+                          <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#006769" }}>{t(`${serviceCode}_DOWNLOAD`)}</h2>
                         </button>
                       </div>
                     </div>
@@ -146,25 +154,21 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
 
   return (
     <Card style={{ borderRadius: "1rem" }}>
-      <CardHeader style={{marginLeft:'12px'}}>{t("BPA_BPA_PCO_SUMMARY")}</CardHeader>
+      <CardHeader style={{ marginLeft: "12px" }}>{t("BPA_BPA_PCO_SUMMARY")}</CardHeader>
       <div style={{ padding: "16px" }}>
-        {renderSection(formData.applicantDetails, "APPLICANT_DETAILS")}
-        {renderSection(formData.landandProjectDesignDetails, "LAND_AND_PROJECT_DETAILS")}
-        {renderSection(formData.designOfficeDetailing, "DESIGN_OFFICE_DETAILS")}
+        {renderSection(formData.applicantDetails, "BPA_BPA_PCO_APPLICANTDETAILS")}
+        {renderSection(formData.landandProjectDesignDetails, "BPA_BPA_PCO_LANDANDPROJECTDESIGNDETAILS")}
+        {renderSection(formData.designOfficeDetailing, "BPA_BPA_PCO_DESIGNOFFICEDETAILING")}
         {renderDocuments(formData.uploadedDocs)}
       </div>
       <div className="flex justify-end mt-8">
         <div className="footer-buttons-wrapper">
-        <button style={{width:'auto', marginLeft:'auto'}} className="digit-submit-bar previous-btn" onClick={onPrevious}>
-          <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#006769" }}>
-            {t(`${serviceCode}_PREVIOUS`)}
-          </h2>
-        </button>
-        <button className="digit-submit-bar digit-formcomposer-submitbar" style={{marginLeft:'0'}} onClick={() => onSubmit(formData)}>
-          <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#fff" }}>
-            {t(`${serviceCode}_SUBMIT`)}
-          </h2>
-        </button>
+          <button style={{ width: "auto", marginLeft: "auto" }} className="digit-submit-bar previous-btn" onClick={onPrevious}>
+            <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#006769" }}>{t(`${serviceCode}_PREVIOUS`)}</h2>
+          </button>
+          <button className="digit-submit-bar digit-formcomposer-submitbar" style={{ marginLeft: "0" }} onClick={() => onSubmit(formData)}>
+            <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#fff" }}>{t(`${serviceCode}_SUBMIT`)}</h2>
+          </button>
         </div>
       </div>
       <style jsx>{`
@@ -177,7 +181,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
           font-size: 18px;
           font-weight: bold;
           margin-bottom: 16px;
-          color: #0B0C0C;
+          color: #0b0c0c;
         }
         .section-content {
           display: flex;
@@ -190,14 +194,14 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
         }
         .field-label {
           width: 100%;
-          color: #505A5F;
+          color: #505a5f;
           font-weight: 500;
           font-size: 16px;
-          font-family: 'Inter';
+          font-family: "Inter";
         }
         .field-value {
           width: 60%;
-          color: #0B0C0C;
+          color: #0b0c0c;
           font-size: 19px;
         }
         .document-item {
@@ -211,10 +215,10 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
           align-content: flex-start;
         }
         .file-name {
-          color: #505A5F !important;
+          color: #505a5f !important;
         }
         .file-id {
-          color: #505A5F;
+          color: #505a5f;
           font-size: 0.9em;
         }
       `}</style>
