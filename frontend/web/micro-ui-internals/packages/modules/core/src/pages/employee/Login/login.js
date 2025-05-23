@@ -70,13 +70,17 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
       redirectPath = `/${window?.contextPath}/employee/dss/landing/home`;
     }
 
+    if (window?.location?.href?.includes("digit-studio/employee")) {
+      redirectPath = `/${window?.contextPath}/employee/publicservices/modules?selectedPath=Apply`;
+    }
+
     history.replace(redirectPath);
   }, [user]);
 
   useEffect(() => {
     // Check if we have email in location.state and update params accordingly
     if (location.state?.email) {
-      setParams(prev => ({ ...prev, username: location.state.email }));
+      setParams((prev) => ({ ...prev, username: location.state.email }));
     }
   }, [location]);
 
@@ -153,7 +157,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
               pathname: `${path}/otp`,
               state: {
                 email: inputEmail,
-                tenant: Digit.ULBService.getStateId()
+                tenant: Digit.ULBService.getStateId(),
               },
             });
 
@@ -234,12 +238,12 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
     history.push(`/${window?.contextPath}/employee/user/forgot-password`);
   };
 
-    const defaultValue = {
+  const defaultValue = {
     code: Digit.ULBService.getStateId(),
     name: Digit.Utils.locale.getTransformedLocale(`TENANT_TENANTS_${Digit.ULBService.getStateId()}`),
   };
 
-  let config = [{body : propsConfig?.inputs}];
+  let config = [{ body: propsConfig?.inputs }];
 
   const { mode } = Digit.Hooks.useQueryParams();
   if (mode === "admin" && config?.[0]?.body?.[2]?.disable == false && config?.[0]?.body?.[2]?.populators?.defaultValue == undefined) {
@@ -255,27 +259,26 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   return (
     <div style={{ width: "100%", display: "flex", justifyContent: "center" }} className="employee-login-wrapper">
       <Switch>
-        <AppContainer style={{ marginTop: "80px"}}>
+        <AppContainer style={{ marginTop: "80px" }}>
           {showSuccessModal && (
-            <Modal
-              popupModuleMianStyles={{}}
-              hideSubmit={true}
-              showClose={false}
-              headerBarMain={null}
-              headerBarEnd={null}
-            >
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
-                <div style={{
-                  width: "56px",
-                  height: "56px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginBottom: "16px"
-                }}>
+            <Modal popupModuleMianStyles={{}} hideSubmit={true} showClose={false} headerBarMain={null} headerBarEnd={null}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <div
+                  style={{
+                    width: "56px",
+                    height: "56px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginBottom: "16px",
+                  }}
+                >
                   <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_51_5398)">
-                      <path d="M38.71 17.6867L23.3333 33.0633L14.9566 24.71L11.6666 28L23.3333 39.6667L42 21L38.71 17.6867ZM28 4.66666C15.12 4.66666 4.66663 15.12 4.66663 28C4.66663 40.88 15.12 51.3333 28 51.3333C40.88 51.3333 51.3333 40.88 51.3333 28C51.3333 15.12 40.88 4.66666 28 4.66666ZM28 46.6667C17.6866 46.6667 9.33329 38.3133 9.33329 28C9.33329 17.6867 17.6866 9.33332 28 9.33332C38.3133 9.33332 46.6666 17.6867 46.6666 28C46.6666 38.3133 38.3133 46.6667 28 46.6667Z" fill="#006769" />
+                      <path
+                        d="M38.71 17.6867L23.3333 33.0633L14.9566 24.71L11.6666 28L23.3333 39.6667L42 21L38.71 17.6867ZM28 4.66666C15.12 4.66666 4.66663 15.12 4.66663 28C4.66663 40.88 15.12 51.3333 28 51.3333C40.88 51.3333 51.3333 40.88 51.3333 28C51.3333 15.12 40.88 4.66666 28 4.66666ZM28 46.6667C17.6866 46.6667 9.33329 38.3133 9.33329 28C9.33329 17.6867 17.6866 9.33332 28 9.33332C38.3133 9.33332 46.6666 17.6867 46.6666 28C46.6666 38.3133 38.3133 46.6667 28 46.6667Z"
+                        fill="#006769"
+                      />
                     </g>
                     <defs>
                       <clipPath id="clip0_51_5398">
@@ -287,9 +290,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
                 <p style={{ fontSize: "24px", textAlign: "center", margin: "10px", fontWeight: "700", fontFamily: "Inter" }}>
                   {t("MODEL_LOGIN_SUCCESSFUL_HEADER")}
                 </p>
-                <p style={{ fontSize: "16px", textAlign: "center", margin: "0", fontFamily: "Inter" }}>
-                  {t("EMPLOYEE_EMAIL_LOGIN_SUCCESSFUL")}
-                </p>
+                <p style={{ fontSize: "16px", textAlign: "center", margin: "0", fontFamily: "Inter" }}>{t("EMPLOYEE_EMAIL_LOGIN_SUCCESSFUL")}</p>
               </div>
             </Modal>
           )}
@@ -313,39 +314,39 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
 
           <Route path={`${path}/otp`}>
             <div className="application-header">
-                <SelectOtp
-      config={{
-        ...loginConfig[0],
-        email: params.username || (location.state?.email || ""),
-        inputs: [
-          {
-            label: "CORE_LOGIN_OTP",
-            // type: "text",
-            name: "otp",
-            validation: {
-              required: true,
-              minlength: 0,
-              maxlength: 6,
-              pattern: /^[0-9]*$/,
-              title: "Please enter a valid OTP"
-            },
-            error: "CORE_COMMON_INVALID_OTP"
-          }
-        ],
-        texts: {
-          header: "CS_LOGIN_OTP",
-          cardText: `${params.username || (location.state?.email || "")}`,
-          submitBarLabel: "CS_COMMONS_VERIFY"
-        }
-      }}
-      onOtpChange={handleOtpChange}
-      onResend={resendOtp}
-      onSelect={selectOtp}
-      otp={params.otp || ""}
-      error={isOtpValid}
-      canSubmit={true}
-      t={t}
-    />
+              <SelectOtp
+                config={{
+                  ...loginConfig[0],
+                  email: params.username || location.state?.email || "",
+                  inputs: [
+                    {
+                      label: "CORE_LOGIN_OTP",
+                      // type: "text",
+                      name: "otp",
+                      validation: {
+                        required: true,
+                        minlength: 0,
+                        maxlength: 6,
+                        pattern: /^[0-9]*$/,
+                        title: "Please enter a valid OTP",
+                      },
+                      error: "CORE_COMMON_INVALID_OTP",
+                    },
+                  ],
+                  texts: {
+                    header: "CS_LOGIN_OTP",
+                    cardText: `${params.username || location.state?.email || ""}`,
+                    submitBarLabel: "CS_COMMONS_VERIFY",
+                  },
+                }}
+                onOtpChange={handleOtpChange}
+                onResend={resendOtp}
+                onSelect={selectOtp}
+                otp={params.otp || ""}
+                error={isOtpValid}
+                canSubmit={true}
+                t={t}
+              />
             </div>
           </Route>
 
