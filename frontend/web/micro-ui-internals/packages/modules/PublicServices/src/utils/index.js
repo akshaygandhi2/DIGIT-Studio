@@ -148,7 +148,7 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
       documents, // <-- documents as top-level key
       additionalDetails,
       Workflow: {
-        action: "CREATE",
+        action: "DRAFT",
         comment: "",
         assignees: [],
       },
