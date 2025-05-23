@@ -167,7 +167,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
             <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#006769" }}>{t(`${serviceCode}_PREVIOUS`)}</h2>
           </button>
           <button className="digit-submit-bar digit-formcomposer-submitbar" style={{ marginLeft: "0" }} onClick={() => onSubmit(formData)}>
-            <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#fff" }}>{t(`${serviceCode}_SUBMIT`)}</h2>
+            <h2 style={{ fontSize: "16px", fontWeight: "500", color: "#fff" }}>{t(`${serviceCode}_APPLY`)}</h2>
           </button>
         </div>
       </div>

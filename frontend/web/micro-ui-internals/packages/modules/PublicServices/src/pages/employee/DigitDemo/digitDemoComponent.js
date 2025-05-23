@@ -25,6 +25,8 @@ const DigitDemoComponent = () => {
   const [currentStep, setCurrentStep] = useState(savedStep);
   const [formData, setFormData] = useState(savedFormData);
   const [sessionData, setSessionData] = useState(savedFormData);
+  const [id, setId] = useState("");
+  const [serviceCodeResponse, setServiceCodeResponse] = useState("");
 
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
@@ -88,7 +90,6 @@ const DigitDemoComponent = () => {
     sessionStorage.setItem("formData", JSON.stringify(updatedFormData));
     setSessionData(updatedFormData);
   };
-
   const onSubmit = async (data) => {
     const sectionName = currentFormConfig.name || `section_${currentStep}`;
     const updatedFormData =
@@ -96,11 +97,13 @@ const DigitDemoComponent = () => {
         ? { ...formData, ...data }
         : { ...formData, [sectionName]: data };
 
+    const docStep = rawConfig.findIndex((item) => item.type === "documents");
+    const beforeDocStep = currentStep === docStep;
     const isLastStep = currentStep === rawConfig.length;
 
     setFormData(updatedFormData);
     persistData(updatedFormData, currentStep);
-    if (!isLastStep) {
+    if (!(beforeDocStep || isLastStep)) {
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
       persistData(updatedFormData, nextStep);
@@ -110,38 +113,48 @@ const DigitDemoComponent = () => {
         {
           url: `/public-service/v1/application/${schemaCode}`,
           params: {},
-          headers: { "x-tenant-id": tenantId },
-          method: "POST",
-          body: transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails),
+          headers: { "x-tenant-id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token },
+          method: isLastStep ? "PUT" : "POST",
+          body: isLastStep
+            ? transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, id, serviceCodeResponse, config, workflowDetails)
+            : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails),
           config: {
             enable: true,
           },
         },
         {
           onSuccess: (data) => {
+            setId(data?.Application?.id);
+            setServiceCodeResponse(data?.Application?.serviceCode);
             localStorage.removeItem("formData");
             localStorage.removeItem("currentStep");
             sessionStorage.removeItem("formData");
-            history.push({
-              pathname: `/${window.contextPath}/employee/publicservices/${module}/${service}/response`,
-              search: "?isSuccess=true",
-              state: {
-                message: "COMMON_APPLICATION_CREATED",
-                showID: true,
-                applicationNumber: data?.Application?.applicationNumber,
-                redirectionUrl: `/${window.contextPath}/employee/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
-              },
-            });
+
+            if (!isLastStep) {
+              setCurrentStep(currentStep + 1);
+            } else {
+              history.push({
+                pathname: `/${window.contextPath}/employee/publicservices/${module}/${service}/response`,
+                search: "?isSuccess=true",
+                state: {
+                  message: "COMMON_APPLICATION_CREATED",
+                  showID: true,
+                  applicationNumber: data?.Application?.applicationNumber,
+                  redirectionUrl: `/${window.contextPath}/employee/publicservices/${module}/${service}/ViewScreen?applicationNumber=${data?.Application?.applicationNumber}&serviceCode=${schemaCode}`,
+                },
+              });
+            }
           },
           onError: () => {
-            history.push({
-              pathname: `/${window.contextPath}/employee/publicservices/${module}/response`,
-              search: "?isSuccess=false",
-              state: {
-                message: "COMMON_APPLICATION_FAILED",
-                showID: false,
-              },
-            });
+            // history.push({
+            //   pathname: `/${window.contextPath}/employee/publicservices/${module}/response`,
+            //   search: "?isSuccess=false",
+            //   state: {
+            //     message: "COMMON_APPLICATION_FAILED",
+            //     showID: false,
+            //   },
+            // });
+            <Toast label={t("COMMON_APPLICATION_FAILED")} />;
           },
         }
       );
@@ -199,7 +212,7 @@ const DigitDemoComponent = () => {
         <FormComposerV2
           key={currentFormConfig?.name}
           heading={t(`${serviceCode}_HEADING`)}
-          label={currentStep === steps.length ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
+          label={currentStep === steps.length - 1 ? t(`${serviceCode}_SUBMIT`) : t(`${serviceCode}_NEXT`)}
           config={[
             {
               ...currentFormConfig,
