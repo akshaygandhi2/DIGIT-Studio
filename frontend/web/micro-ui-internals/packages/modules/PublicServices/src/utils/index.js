@@ -89,7 +89,7 @@ const transformUploadedDocs = (uploadedDocs = {}) => {
   return documents;
 };
 
-export const transformToApplicationPayload = (formData, configMap, service, tenantId) => {
+export const transformToApplicationPayload = (formData, configMap, service, tenantId, id, serviceCode) => {
   const currentConfig = configMap?.ServiceConfiguration?.find((ob) => ob?.service === service);
 
   const serviceDetails = getServiceDetails(formData);
@@ -120,6 +120,8 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
 
   const requestBody = {
     Application: {
+      id,
+      serviceCode,
       tenantId,
       module: currentConfig?.module,
       businessService: currentConfig?.service,
