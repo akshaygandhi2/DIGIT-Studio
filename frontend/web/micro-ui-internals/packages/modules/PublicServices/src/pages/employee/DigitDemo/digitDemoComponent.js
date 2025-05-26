@@ -25,8 +25,7 @@ const DigitDemoComponent = () => {
   const [currentStep, setCurrentStep] = useState(savedStep);
   const [formData, setFormData] = useState(savedFormData);
   const [sessionData, setSessionData] = useState(savedFormData);
-  const [id, setId] = useState("");
-  const [serviceCodeResponse, setServiceCodeResponse] = useState("");
+  const [responseData, setResponseData] = useState("");
 
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
@@ -70,15 +69,14 @@ const DigitDemoComponent = () => {
   const steps = rawConfig.map((config) => config.head || config.label || "Untitled Section");
   const currentFormConfig = rawConfig[currentStep - 1];
   const schemaCode = queryStrings?.serviceCode || "SVC-DEV-TRADELICENSE-NEWTL-04";
+  const isLastStep = currentStep === rawConfig.length;
 
   const reqCreate = {
     url: `/public-service/v1/application/${schemaCode}`,
-    params: {},
-    body: {},
-    method: "POST",
-    headers: {},
+    method: isLastStep ? "PUT" : "POST",
+    headers: { "x-tenant-id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token },
     config: {
-      enable: false,
+      enable: true,
     },
   };
 
@@ -99,13 +97,12 @@ const DigitDemoComponent = () => {
 
     const docStep = rawConfig.findIndex((item) => item.type === "documents");
     const beforeDocStep = currentStep === docStep;
-    const isLastStep = currentStep === rawConfig.length;
 
     setFormData(updatedFormData);
     persistData(updatedFormData, currentStep);
 
     // If we have an ID and it's not the last step, just move to next step
-    if (id && !isLastStep) {
+    if (responseData?.Application?.id && !isLastStep) {
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
       persistData(updatedFormData, nextStep);
@@ -116,31 +113,13 @@ const DigitDemoComponent = () => {
     if (beforeDocStep || isLastStep) {
       await mutation.mutate(
         {
-          url: `/public-service/v1/application/${schemaCode}`,
-          params: {},
-          headers: { "x-tenant-id": tenantId, "auth-token": Digit.UserService.getUser()?.access_token },
-          method: isLastStep ? "PUT" : "POST",
           body: isLastStep
-            ? transformToApplicationPayload(
-                updatedFormData,
-                Updatedconfig,
-                service,
-                tenantId,
-                config,
-                workflowDetails,
-                id,
-                serviceCodeResponse,
-                isLastStep
-              )
+            ? transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails, isLastStep, responseData)
             : transformToApplicationPayload(updatedFormData, Updatedconfig, service, tenantId, config, workflowDetails),
-          config: {
-            enable: true,
-          },
         },
         {
           onSuccess: (data) => {
-            setId(data?.Application?.id);
-            setServiceCodeResponse(data?.Application?.serviceCode);
+            setResponseData(data);
             setFormData({ ...formData, applicationNumber: data?.Application?.applicationNumber });
             localStorage.removeItem("formData");
             localStorage.removeItem("currentStep");

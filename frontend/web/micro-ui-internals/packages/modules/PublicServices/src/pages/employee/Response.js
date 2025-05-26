@@ -1,23 +1,34 @@
 import React, { useState } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Banner, Card, LinkLabel, AddFileFilled, ArrowLeftWhite, ActionBar, SubmitBar, ArrowRightInbox } from "@egovernments/digit-ui-react-components";
+import {
+  Banner,
+  Card,
+  LinkLabel,
+  AddFileFilled,
+  ArrowLeftWhite,
+  ActionBar,
+  SubmitBar,
+  ArrowRightInbox,
+} from "@egovernments/digit-ui-react-components";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
 const Response = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const queryStrings = Digit.Hooks.useQueryParams();
-  const {module, service} = useParams();
+  const { module, service } = useParams();
   const [isResponseSuccess, setIsResponseSuccess] = useState(
     queryStrings?.isSuccess === "true" ? true : queryStrings?.isSuccess === "false" ? false : true
   );
   const { state } = useLocation();
+  const userDetails = Digit.UserService.getUser();
+  const userType = userDetails?.info?.type?.toLowerCase();
 
   const navigate = (page) => {
     switch (page) {
       case "home": {
-        history.push(`/${window.contextPath}/employee`);
+        history.push(`/${window.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`);
       }
       case "view": {
         history.push(state.redirectionUrl);
@@ -41,7 +52,7 @@ const Response = () => {
         </LinkLabel>
       </div>
       <ActionBar>
-        <Link to={`/${window.contextPath}/employee`}>
+        <Link to={`/${window.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`}>
           <SubmitBar label={t(`${module.toUpperCase()}_${service.toUpperCase()}_GO_TO_HOME`)} />
         </Link>
       </ActionBar>

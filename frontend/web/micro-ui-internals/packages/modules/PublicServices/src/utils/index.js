@@ -90,18 +90,20 @@ const transformUploadedDocs = (uploadedDocs = {}) => {
   return documents;
 };
 
-export const transformToApplicationPayload = (formData, configMap, service, tenantId, config, workflowDetails, id, serviceCode, isLastStep) => {
+export const transformToApplicationPayload = (formData, configMap, service, tenantId, config, workflowDetails, isLastStep, responseData) => {
   const currentConfig = configMap?.ServiceConfiguration?.find((ob) => ob?.service === service);
 
   const serviceDetails = getServiceDetails(formData);
   const applicants =
     formData.applicantDetails?.filter(Boolean)?.map((applicant, index) => ({
+      id: responseData?.Application?.applicants?.[index]?.id || null,
       type: "CITIZEN",
       name: applicant?.legalName,
       mobileNumber: Number(applicant?.telephone),
       emailId: applicant?.email || `user${index + 1}@example.com`,
       prefix: "253",
       active: true,
+      userId: responseData?.Application?.applicants?.[index]?.userId || "",
     })) || [];
 
   const applicant = formData.applicantDetails?.filter(Boolean)?.[0];
@@ -121,8 +123,9 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
 
   const requestBody = {
     Application: {
-      id,
-      serviceCode,
+      id: responseData?.Application?.id || null,
+      applicationNumber: responseData?.Application?.applicationNumber || "",
+      serviceCode: responseData?.Application?.serviceCode || null,
       tenantId,
       module: currentConfig?.module,
       businessService: currentConfig?.service,
@@ -135,6 +138,7 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
       },
       applicants,
       address: {
+        id: responseData?.Application?.address?.id || null,
         tenantId,
         latitude: 0,
         longitude: 0,
@@ -151,13 +155,25 @@ export const transformToApplicationPayload = (formData, configMap, service, tena
       documents, // <-- documents as top-level key
       additionalDetails,
       Workflow: {
-        action: workflowDetails?.BusinessServices?.[0]?.states.filter((ob) => ob?.state === null)?.[0]?.actions?.[0]?.action,
+        id: responseData?.Application?.workflow?.id || null,
+        action: isLastStep
+          ? responseData?.Application?.processInstance?.[0]?.nextActions?.[0]?.action
+          : workflowDetails?.BusinessServices?.[0]?.states.filter((ob) => ob?.state === null || ob?.state === "")?.[0]?.actions?.[0]?.action,
         comment: "",
         assignees: [],
         businessService: config?.data?.workflow?.businessService,
       },
     },
   };
+
+  if (isLastStep) {
+    requestBody.RequestInfo = {
+      apiId: "Rainmaker",
+      authToken: Digit.UserService.getUser()?.access_token,
+      userInfo: Digit.UserService.getUser()?.info,
+      msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
+    };
+  }
 
   return requestBody;
 };
