@@ -76,9 +76,10 @@
     padding-top: 88px;
     padding-left: 40px;
     padding-right: 40px;
-
-  }
-
+      margin-bottom: 0 !important;
+      background: linear-gradient(90deg, #eff6ff, #fff) !important;
+      min-height: 100vh !important;
+    }
   .loginContainer {
     padding-top: 88px;
   }
@@ -128,7 +129,9 @@
 .citizen {
   .main {
     padding-top: 82px;
-    min-height: calc(100vh - 90px);
+    min-height: 100vh !important;
+    margin-bottom: 0 !important;
+    background: linear-gradient(90deg, #eff6ff, #fff) !important;
   }
 }
 
@@ -501,6 +504,7 @@
       .ground-container {
         padding-left: 40px !important;
         padding-right: 40px !important;
+        padding-bottom: 80px !important;
       }
     }
 
