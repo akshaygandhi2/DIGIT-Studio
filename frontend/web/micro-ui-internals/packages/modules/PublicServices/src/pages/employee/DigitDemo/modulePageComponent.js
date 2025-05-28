@@ -103,6 +103,7 @@ const modulePageComponent = ({}) => {
        .module-card {
         width: 100%;
         min-width: 400px;
+        min-height: 220px;
         padding: 15px 30px 15px 30px;
        }
         .inbox-header{

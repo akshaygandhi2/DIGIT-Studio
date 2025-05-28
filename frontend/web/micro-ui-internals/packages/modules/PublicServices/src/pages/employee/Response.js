@@ -24,6 +24,61 @@ const Response = () => {
   const { state } = useLocation();
   const userDetails = Digit.UserService.getUser();
   const userType = userDetails?.info?.type?.toLowerCase();
+  const tenantId = Digit?.ULBService?.getStateId();
+
+  const handleTemplateDownload = async () => {
+    try {
+      const params = {
+        tenantId,
+        serviceCode: service,
+        applicationNumber: state?.applicationNumber,
+        pdfKey: "pco-receipt"
+      };
+
+      let url = `/studio-pdf/public-service/download/pdf`;
+      try {
+        const response = await Digit.CustomService.getResponse({
+          url,
+          params,
+          method: "POST",
+          useCache: false,
+          userDownload: true,
+          headers: {
+            Accept: "application/pdf",
+          },
+        });
+
+        const downloadPdf = (blob, fileName) => {
+          if (window.mSewaApp && window.mSewaApp.isMsewaApp() && window.mSewaApp.downloadBase64File) {
+            var reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = function () {
+              var base64data = reader.result;
+              window.mSewaApp.downloadBase64File(base64data, fileName);
+            };
+          } else {
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            document.body.append(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(link.href), 7000);
+          }
+        };
+
+        downloadPdf(
+          new Blob([response.data], { type: "application/pdf" }),
+          `${state?.applicationNumber}_receipt.pdf`
+        );
+      } catch (err) {
+        console.error(err);
+        Digit.Toast.error(t("TEMPLATE_DOWNLOAD_FAILED"));
+      }
+    } catch (err) {
+      console.error("Template download error", err);
+    }
+  };
 
   const navigate = (page) => {
     switch (page) {
@@ -45,13 +100,18 @@ const Response = () => {
         whichSvg={`${isResponseSuccess ? "tick" : null}`}
         applicationNumber={state?.applicationNumber}
       />
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", gap: "1rem" }}>
         <LinkLabel style={{ display: "flex", marginRight: "3rem" }} onClick={() => navigate("view")}>
           <ArrowRightInbox fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
           {t(`${module.toUpperCase()}_${service.toUpperCase()}_VIEW_APPLICATION`)}
         </LinkLabel>
       </div>
-      <ActionBar>
+      <ActionBar style={{display: "flex", justifyContent: "space-between"}}>
+         {service === "BPA_PCO" && (
+          <button style={{width: "20%", backgroundColor: "#006769", color: "white", padding: "10px", border: "none", cursor: "pointer", fontSize: "19px", fontWeight:'700'}} onClick={handleTemplateDownload}>
+            {t("CS_COMMON_DOWNLOAD_RECEIPT")}
+          </button>
+        )}
         <Link to={`/${window.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`}>
           <SubmitBar label={t(`${module.toUpperCase()}_${service.toUpperCase()}_GO_TO_HOME`)} />
         </Link>
