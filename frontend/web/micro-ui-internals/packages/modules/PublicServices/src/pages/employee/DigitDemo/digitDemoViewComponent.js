@@ -20,20 +20,19 @@ const DigitDemoViewComponent = () => {
   const queryStrings = Digit.Hooks.useQueryParams();
   const [showOptions, setShowOptions] = useState(false);
   const request = {
-    url : `/public-service/v1/application/${queryStrings?.serviceCode}`,
+    url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
     headers: {
-      "X-Tenant-Id" : tenantId,
-     "auth-token":
-              Digit.UserService.getUser()?.access_token,
+      "X-Tenant-Id": tenantId,
+      "auth-token": Digit.UserService.getUser()?.access_token,
     },
     method: "GET",
     params: {
-      "applicationNumber": queryStrings?.applicationNumber,
-      "tenantId" : tenantId
-    }
-  }
-  const {isLoading, data} = Digit.Hooks.useCustomAPIHook(request);
-  let response =  data ? data?.Application?.[0] : {};
+      applicationNumber: queryStrings?.applicationNumber,
+      tenantId: tenantId,
+    },
+  };
+  const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
+  let response = data ? data?.Application?.[0] : {};
 
   const requestCriteria = {
     url: "/egov-mdms-service/v2/_search",
@@ -47,78 +46,75 @@ const DigitDemoViewComponent = () => {
 
   const { isLoading: ServiceConfigLoading, data: serviceConfigData } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
-  const serviceConfig = serviceConfigData?.mdms?.find((item) =>
-    item?.uniqueIdentifier.toLowerCase() === `${module}.${service}`.toLowerCase()
-  );
+  const serviceConfig = serviceConfigData?.mdms?.find((item) => item?.uniqueIdentifier.toLowerCase() === `${module}.${service}`.toLowerCase());
 
-  let {data :workflowDetails, isLoading: workflowLoading} = useWorkflowDetailsWorks(
-    {
-      tenantId: tenantId,
-      id: queryStrings?.applicationNumber,
-      moduleCode: queryStrings?.businessService || serviceConfig?.data?.workflow?.businessService,
-      //moduleCode: "NewTL",
-      config: {
-        enabled: response && serviceConfig ? true : false,
-        cacheTime: 0
-      }
-    }
-  );
-
-  let config = generateViewConfigFromResponse(response,t, queryStrings?.businessService, serviceConfig);
-
-useEffect(() => {
-  // Guard clause to avoid calling with missing inputs
-  if (!serviceConfig || !tenantId || !queryStrings?.applicationNumber || !workflowDetails) return;
-
-  processBusinessServices(
-    serviceConfig,
-    tenantId,
-    queryStrings?.applicationNumber,
-    workflowDetails,
-    userRoles,
-    t
-  ).then((matched) => {
-    setMatchedBusinessServices(matched);
+  let { data: workflowDetails, isLoading: workflowLoading } = useWorkflowDetailsWorks({
+    tenantId: tenantId,
+    id: queryStrings?.applicationNumber,
+    moduleCode: queryStrings?.businessService || serviceConfig?.data?.workflow?.businessService,
+    //moduleCode: "NewTL",
+    config: {
+      enabled: response && serviceConfig ? true : false,
+      cacheTime: 0,
+    },
   });
-}, [
-  workflowDetails,
-]);
 
-useEffect(() => {
-  if (matchedBusinessServices.length === 1 && !selectedBusinessService) {
-    setSelectedBusinessService(matchedBusinessServices[0]);
-  }
-}, [matchedBusinessServices, selectedBusinessService]);
+  let config = generateViewConfigFromResponse(response, t, queryStrings?.businessService, serviceConfig);
+
+  useEffect(() => {
+    // Guard clause to avoid calling with missing inputs
+    if (!serviceConfig || !tenantId || !queryStrings?.applicationNumber || !workflowDetails) return;
+
+    processBusinessServices(serviceConfig, tenantId, queryStrings?.applicationNumber, workflowDetails, userRoles, t).then((matched) => {
+      setMatchedBusinessServices(matched);
+    });
+  }, [workflowDetails]);
+
+  useEffect(() => {
+    if (matchedBusinessServices.length === 1 && !selectedBusinessService) {
+      setSelectedBusinessService(matchedBusinessServices[0]);
+    }
+  }, [matchedBusinessServices, selectedBusinessService]);
   let checkListCodes = workflowDetails ? [`${response?.businessService}.${workflowDetails?.processInstances[0].state?.state}`] : [];
   if (isLoading || workflowLoading || ServiceConfigLoading) {
     return <Loader />;
   }
   const generateDownloadOptions = () => {
     return serviceConfig?.data?.pdf
-      .filter(obj => obj.states.includes(response?.workflowStatus))
-      .map(obj => ({
+      .filter((obj) => obj?.states?.includes(response?.workflowStatus))
+      .map((obj) => ({
         // icon: <WhatsappIcon />, // Uncomment and customize if needed
         label: t(`STUDIO_${obj.type.toUpperCase()}`),
         onClick: () => {
           setShowOptions(!showOptions);
           HandleDownloadPdf(obj.key);
-        }
+        },
       }));
   };
 
   const HandleDownloadPdf = (key) => {
-      downloadStudioPDF('pdf/generatepdf',{applicationNumber:queryStrings?.applicationNumber,tenantId, serviceCode:queryStrings?.serviceCode, pdfKey:key},`Muster-roll-${"aaaaaaa"}.pdf`)
-  }
+    downloadStudioPDF(
+      "pdf/generatepdf",
+      { applicationNumber: queryStrings?.applicationNumber, tenantId, serviceCode: queryStrings?.serviceCode, pdfKey: key },
+      `Muster-roll-${"aaaaaaa"}.pdf`
+    );
+  };
 
   return (
     <React.Fragment>
       {
-        <div className={"employee-application-details"} style={{ marginBottom: "24px", alignItems:"center" }}>
-            <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px" }}>
-              {t(`${response?.module.toUpperCase()}_${response?.businessService?.toUpperCase()}_APPLICATION_DETAILS`)}
-            </Header>
-            <MultiLink onHeadClick={() => setShowOptions(!showOptions)} className="multilink-block-wrapper divToBeHidden" label={t("CS_COMMON_DOWNLOAD")}  displayOptions={showOptions} options={generateDownloadOptions()}/>
-            {/* <Button
+        <div className={"employee-application-details"} style={{ marginBottom: "24px", alignItems: "center" }}>
+          <Header className="works-header-view" styles={{ marginLeft: "0px", paddingTop: "10px" }}>
+            {t(`${response?.module.toUpperCase()}_${response?.businessService?.toUpperCase()}_APPLICATION_DETAILS`)}
+          </Header>
+          <MultiLink
+            onHeadClick={() => setShowOptions(!showOptions)}
+            className="multilink-block-wrapper divToBeHidden"
+            label={t("CS_COMMON_DOWNLOAD")}
+            displayOptions={showOptions}
+            options={generateDownloadOptions()}
+          />
+          {/* <Button
             label={t("CS_COMMON_DOWNLOAD")}
             onClick={() => HandleDownloadPdf()}
             className={"employee-download-btn-className"}
@@ -130,7 +126,8 @@ useEffect(() => {
       }
       <ViewComposer data={config} isLoading={false} />
       <ViewCheckListCards applicationId={data?.Application?.[0]?.id} checkListCodes={checkListCodes} />
-        { <WorkflowActions
+      {
+        <WorkflowActions
           forcedActionPrefix={`WF_${response?.businessService}_ACTION`}
           businessService={selectedBusinessService?.code || matchedBusinessServices[0]?.code}
           applicationNo={response?.applicationNumber}
@@ -155,7 +152,8 @@ useEffect(() => {
               />,
             ],
           })}
-        />}
+        />
+      }
       {/* <ActionBar>
         {displayMenu ? <Menu localeKeyPrefix={"WORKS"} options={actionULB} optionKey={"name"} t={t} onSelect={onActionSelect} /> : null}
         <SubmitBar label={t("ACTIONS")} onSubmit={() => setDisplayMenu(!displayMenu)} />
