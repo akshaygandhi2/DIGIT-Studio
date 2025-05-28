@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useState } from "react";
 import PropTypes from "prop-types";
 import UploadFile from "../atoms/UploadFile";
+import { Loader } from "@egovernments/digit-ui-react-components";
 
 const displayError = ({ t, error, name }, customErrorMsg) => (
   <span style={{ display: "flex", flexDirection: "column" }}>
@@ -73,6 +74,7 @@ const MultiUploadWrapper = ({
 
   const [fileErrors, setFileErrors] = useState([]);
   const [enableButton, setEnableButton] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const uploadMultipleFiles = (state, payload) => {
     const { files, fileStoreIds } = payload;
@@ -104,22 +106,29 @@ const MultiUploadWrapper = ({
   const onUploadMultipleFiles = async (e) => {
     setEnableButton(false);
     setFileErrors([]);
+    setIsLoading(true);
     const files = Array.from(e.target.files);
 
-    if (!files.length) return;
+    if (!files.length) {
+      setIsLoading(false);
+      return;
+    }
     const [validationMsg, error] = checkIfAllValidFiles(files, allowedFileTypesRegex, allowedMaxSizeInMB, t, maxFilesAllowed, state);
 
     if (!error) {
       try {
         const { data: { files: fileStoreIds } = {} } = await Digit.UploadServices.MultipleFilesStorage(module, e.target.files, tenantId);
         setEnableButton(true);
+        setIsLoading(false);
         return dispatch({ type: FILES_UPLOADED, payload: { files: e.target.files, fileStoreIds } });
       } catch (err) {
         setEnableButton(true);
+        setIsLoading(false);
       }
     } else {
       setFileErrors(validationMsg);
       setEnableButton(true);
+      setIsLoading(false);
     }
   };
 
@@ -131,6 +140,24 @@ const MultiUploadWrapper = ({
 
   return (
     <div style={containerStyles}>
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+          }}
+        >
+          <Loader />
+        </div>
+      )}
       <UploadFile
         onUpload={(e) => onUploadMultipleFiles(e)}
         removeTargetedFile={(fileDetailsData) => dispatch({ type: TARGET_FILE_REMOVAL, payload: fileDetailsData })}

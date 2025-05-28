@@ -9,11 +9,16 @@ const Modal = ({
   headerBarMain,
   headerBarEnd,
   popupStyles,
+  popupModuleStyles={},
   children,
   actionCancelLabel,
+  actionCancelLabelStyle={},
+  actionCancleTextStyle={},
   actionCancelOnSubmit,
   actionSaveLabel,
   actionSaveOnSubmit,
+  actionSaveOnSubmitStyle={},
+  actionSaveTextStyle={},
   error,
   setError,
   formId,
@@ -38,7 +43,7 @@ const Modal = ({
     };
   }, []);
   return (
-    <PopUp showClose={showClose}>
+    <PopUp style={popupModuleStyles} showClose={showClose}>
       <div className="digit-popup-module" style={popupStyles}>
         <HeaderBar main={headerBarMain} end={headerBarEnd} style={headerBarMainStyle ? headerBarMainStyle : {}} />
         <div className="digit-popup-module-main" style={popupModuleMianStyles ? popupModuleMianStyles : {}}>
@@ -49,10 +54,10 @@ const Modal = ({
             style={popupModuleActionBarStyles}
           >
             {actionCancelLabel ? (
-              <Button textStyles={{width:"100%"}} variation="digit-action-cancel" theme="border" label={actionCancelLabel} onClick={actionCancelOnSubmit} style={{backgroundColor: "#FFFFFF", borderRadius: "10px"}} />
+              <Button textStyles={actionCancleTextStyle} variation="digit-action-cancel" theme="border" label={actionCancelLabel} onClick={actionCancelOnSubmit} style={actionCancelLabelStyle} />
             ) : null}
             {!hideSubmit ? (
-              <Button gradient={true} textStyles={{width:"100%", color: "white"}} label={actionSaveLabel} onClick={actionSaveOnSubmit} formId={formId} isDisabled={isDisabled} style={{backgroundColor: "#006769", borderRadius: "10px", color: "white"}} />
+              <Button gradient={true} textStyles={actionSaveTextStyle} label={actionSaveLabel} onClick={actionSaveOnSubmit} formId={formId} isDisabled={isDisabled} style={actionSaveOnSubmitStyle} />
             ) : null}
           </div>
         </div>

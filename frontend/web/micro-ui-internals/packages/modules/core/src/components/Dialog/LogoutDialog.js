@@ -75,6 +75,29 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
       style={{
         flex: 1,
       }}
+      actionCancelLabelStyle={{
+       backgroundColor: "#FFFFFF",
+       borderRadius: "10px"
+      }}
+      actionCancleTextStyle={{
+        width: "100%",
+        fontSize: "14px",
+      }}
+      actionSaveOnSubmitStyle={{
+        backgroundColor: "#006769",
+        borderRadius: "10px",
+        width: "100%",
+        color: "white"
+      }}
+      actionSaveTextStyle={{
+        width: "100%",
+        fontSize: "14px",
+        color: "white"
+      }}
+      popupModuleStyles={{
+        height: "174px",
+        maxHeight: "174px",
+      }}
       popupModuleMianStyles={{
         padding: "18px",
       }}
@@ -110,6 +133,29 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
       }}
       style={{
         borderRadius: "10px",
+      }}
+      popupModuleStyles={{
+        width: "30%"
+      }}
+      actionCancelLabelStyle={{
+        width:"100%",
+        backgroundColor: "#FFFFFF",
+        borderRadius: "10px"
+      }}
+       actionCancleTextStyle={{
+        width: "100%",
+        fontSize: "16px",
+      }}
+      actionSaveOnSubmitStyle={{
+        backgroundColor: "#006769",
+        borderRadius: "10px",
+        color: "white",
+        width: "100%",
+      }}
+      actionSaveTextStyle={{
+        width: "100%",
+        fontSize: "16px",
+        color: "white"
       }}
     >
       <div>
