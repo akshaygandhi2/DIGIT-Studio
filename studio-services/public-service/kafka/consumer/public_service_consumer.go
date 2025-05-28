@@ -60,7 +60,6 @@ func ConsumePayments(workflowIntegrator *service.WorkflowIntegrator, application
 		criteria := model.SearchCriteria{
 			TenantId:          paymentReq.Payment.TenantID,
 			ApplicationNumber: detail.Bill.ConsumerCode,
-			BusinessService:   detail.BusinessService,
 		}
 
 		searchRes, err := applicationService.SearchApplication(context.Background(), criteria, paymentReq.RequestInfo.AuthToken)
