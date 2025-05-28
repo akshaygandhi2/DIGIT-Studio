@@ -108,7 +108,7 @@ const Response = () => {
       </div>
       <ActionBar style={{display: "flex", justifyContent: "space-between"}}>
          {service === "BPA_PCO" && (
-          <button style={{width: "20%", backgroundColor: "#F47738", color: "white", padding: "10px", border: "none", cursor: "pointer"}} onClick={handleTemplateDownload}>
+          <button style={{width: "20%", backgroundColor: "#006769", color: "white", padding: "10px", border: "none", cursor: "pointer", fontSize: "19px", fontWeight:'700'}} onClick={handleTemplateDownload}>
             {t("CS_COMMON_DOWNLOAD_RECEIPT")}
           </button>
         )}
