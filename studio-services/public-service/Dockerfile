@@ -24,7 +24,7 @@ WORKDIR /opt/egov
 
 # Copy the binary and start script
 COPY --from=build /app/service-binary .
-COPY build/maven/start.sh .
+COPY start.sh .
 
 # Make start.sh executable
 RUN chmod +x ./start.sh
