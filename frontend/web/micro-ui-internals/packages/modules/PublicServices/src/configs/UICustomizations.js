@@ -122,7 +122,7 @@ export const UICustomizations = {
         return (
           <span className="link">
             <Link
-              to={`/${window.contextPath}/${userType}/publicservices/${row?.businessObject?.module}/${row?.businessObject?.businessService}/ViewScreen?applicationNumber=${row?.businessObject?.applicationNumber}&serviceCode=${row?.serviceCode}`}
+              to={`/${window.contextPath}/${userType}/publicservices/${row?.businessObject?.module}/${row?.businessObject?.businessService}/ViewScreen?applicationNumber=${row?.businessObject?.applicationNumber}&serviceCode=${row?.businessObject?.serviceCode}`}
             >
               {String(value ? value : t("ES_COMMON_NA"))}
             </Link>
