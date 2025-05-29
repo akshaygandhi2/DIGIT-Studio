@@ -52,7 +52,7 @@ const modulePageComponent = ({}) => {
                 </div>
                 <div className="">
                 <Link className="link request-button" to={`/${window.contextPath}/${userType}/publicservices/${product.module}/${bs.businessService}/Apply?serviceCode=${bs?.serviceCode}`}>
-                  {bs.businessService}
+                  {t(bs.businessService)}
                 </Link>
                 </div>
               </Card>
