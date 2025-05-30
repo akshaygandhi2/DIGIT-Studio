@@ -142,8 +142,8 @@ export const UICustomizations = {
       return data;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      const stateKey = row?.ProcessInstance?.state?.state?.toUpperCase();
-      const [bgColor, textColor] = colorCodes[stateKey] || ["#DDDDDD","#4B4B4B"];
+      const statusKey = row?.ProcessInstance?.state?.state?.toUpperCase();
+      const [bgColor, textColor] = colorCodes[statusKey] || ["#DDDDDD","#4B4B4B"];
 
       console.log(row, key, column, value, t, searchResult);
       if (key === "APPLICATION_NUMBER") {

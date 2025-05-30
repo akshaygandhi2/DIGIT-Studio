@@ -241,6 +241,7 @@ const CreateCheckList = () => {
           fieldStyle={{ marginRight: 2 }}
           draftLabel={t("Save as Draft")}
           onSecondayActionClick={onSaveAsDraft}
+          heading={t(`CHECKLIST_HEADING`)}
         />
       ) : (
         <Loader />

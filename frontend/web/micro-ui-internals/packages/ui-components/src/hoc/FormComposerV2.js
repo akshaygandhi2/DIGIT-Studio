@@ -412,9 +412,9 @@ export const FormComposer = (props) => {
         <Footer className={"footer-in-form"} style={{justifyContent: "flex-end"}}>
           <div className="footer-buttons-wrapper">
           {props?.draftLabel && (  <SubmitBar className="digit-submit-bar previous-btn" submit="button" label={t(props?.draftLabel)} onClick={props?.onSecondayActionClick} />)}
-          <button type="button" 
+          {props.currentStep && <button type="button" 
           className={`digit-submit-bar previous-btn ${props.currentStep < 2 ? "disabled" : ''}`}
-          onClick={(e) => { e.preventDefault(); props.onPrevious(); }}>Previous</button>
+          onClick={(e) => { e.preventDefault(); props.onPrevious(); }}>Previous</button>}
 
           <SubmitBar label={t(props.label)} className="digit-formcomposer-submitbar" submit="submit" disabled={isDisabled} />
           </div>

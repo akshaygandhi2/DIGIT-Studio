@@ -15,7 +15,7 @@ export const CreateCheckListConfig = (item) => {
                     name: field.code,
                     optionsKey: "name",
                     hideInForm: hide,
-                    alignVertical: true,
+                    alignVertical: false,
                     options: field.values?.slice(0, -1).map(item => ({
                         code: item,
                         name: `${label}.${item}`,
