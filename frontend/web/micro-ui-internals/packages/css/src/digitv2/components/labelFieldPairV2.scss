@@ -22,6 +22,9 @@
 
    .digit-radio-options-wrap {
      margin-top: 0.565rem;
+     flex-wrap: nowrap !important;
+     margin: 0 !important
+
    }
 
    &.vertical {
