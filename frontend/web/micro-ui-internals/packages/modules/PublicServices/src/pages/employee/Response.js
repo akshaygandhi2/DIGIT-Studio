@@ -34,7 +34,7 @@ const Response = () => {
         tenantId,
         serviceCode: queryStrings?.serviceCode,
         applicationNumber: state?.applicationNumber,
-        pdfKey: isOpenPaymentUrl ? "payment-receipt" : "pco-receipt"
+        pdfKey: isOpenPaymentUrl ? "payment-receipt" : "application-receipt"
       };
 
       let url = `/studio-pdf/public-service/download/pdf`;
