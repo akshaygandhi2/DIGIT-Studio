@@ -10,7 +10,7 @@ import {
   ActionBar,
   SubmitBar,
   ArrowRightInbox,
-  ArrowDown
+  ArrowDown,
 } from "@egovernments/digit-ui-react-components";
 import { useParams } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -26,16 +26,15 @@ const Response = () => {
   const userDetails = Digit.UserService.getUser();
   const userType = userDetails?.info?.type?.toLowerCase();
   const tenantId = Digit?.ULBService?.getStateId();
+  const isOpenPaymentUrl = window.location.href.includes("openpayment");
 
   const handleTemplateDownload = async () => {
     try {
       const params = {
         tenantId,
-        serviceCode: service,
+        serviceCode: queryStrings?.serviceCode,
         applicationNumber: state?.applicationNumber,
-        pdfKey: window.location.href.includes("openpayment")
-          ? "payment-receipt"
-          : "pco-receipt"
+        pdfKey: isOpenPaymentUrl ? "payment-receipt" : "application-receipt",
       };
 
       let url = `/studio-pdf/public-service/download/pdf`;
@@ -70,10 +69,7 @@ const Response = () => {
           }
         };
 
-        downloadPdf(
-          new Blob([response.data], { type: "application/pdf" }),
-          `${state?.applicationNumber}_receipt.pdf`
-        );
+        downloadPdf(new Blob([response.data], { type: "application/pdf" }), `${state?.applicationNumber}_receipt.pdf`);
       } catch (err) {
         console.error(err);
         Digit.Toast.error(t("TEMPLATE_DOWNLOAD_FAILED"));
@@ -109,7 +105,13 @@ const Response = () => {
           {t(`${module.toUpperCase()}_${service.toUpperCase()}_VIEW_APPLICATION`)}
         </LinkLabel>
         {service === "BPA_PCO" && (
-           <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handleTemplateDownload}>
+          <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handleTemplateDownload}>
+            <ArrowDown fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
+            {t("CS_COMMON_DOWNLOAD_RECEIPT")}
+          </LinkLabel>
+        )}
+        {isOpenPaymentUrl && (
+          <LinkLabel style={{ display: "flex", marginRight: "3rem", alignItems: "center" }} onClick={handleTemplateDownload}>
             <ArrowDown fill="#F47738" style={{ marginRight: "8px", marginTop: "3px" }} />
             {t("CS_COMMON_DOWNLOAD_RECEIPT")}
           </LinkLabel>
@@ -117,7 +119,7 @@ const Response = () => {
       </div>
       <ActionBar>
         <Link to={`/${window.contextPath}/${userType}/publicservices/modules?selectedPath=Apply`}>
-          <SubmitBar style={{borderRadius: "10px"}} label={t(`${module.toUpperCase()}_${service.toUpperCase()}_GO_TO_HOME`)} />
+          <SubmitBar style={{ borderRadius: "10px" }} label={t(`${module.toUpperCase()}_${service.toUpperCase()}_GO_TO_HOME`)} />
         </Link>
       </ActionBar>
     </Card>
