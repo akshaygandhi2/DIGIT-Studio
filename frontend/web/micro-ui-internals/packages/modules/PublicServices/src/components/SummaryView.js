@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import { Card, CardHeader } from "@egovernments/digit-ui-react-components";
 
 const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
+  
   const downloadFile = async (fileStoreId) => {
     try {
       const tenantId = Digit.ULBService.getCurrentTenantId();

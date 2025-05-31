@@ -45,6 +45,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/:module/:service/ViewScreen`} component={() => <DigitDemoViewComponent />} />
         <PrivateRoute path={`${path}/modules`} component={() => <ModulePageComponent />} />
         <PrivateRoute path={`${path}/:module/inbox`} component={() => <InboxService />} />
+        <PrivateRoute path={`${path}/:module/citizenInbox`} component={() => <InboxService />} />
         <PrivateRoute path={`${path}/viewapp`} component={() => <ViewCheckListCards />} />
         <PrivateRoute path={`${path}/checklist`} component={() => <CreateCheckList />} />
         <PrivateRoute path={`${path}/viewresponse`} component={() => <ViewApplication />} />
