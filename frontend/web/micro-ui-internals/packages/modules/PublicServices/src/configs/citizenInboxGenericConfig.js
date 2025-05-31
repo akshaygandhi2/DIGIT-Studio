@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom/cjs/react-router-dom";
 
-export const InboxConfig = () => {
+export const CitizenInboxConfig = () => {
     const { module } = useParams();
     const prefix = `${module?.toUpperCase()}`;
 
@@ -11,25 +11,13 @@ export const InboxConfig = () => {
         apiDetails: {
             serviceName: "/public-service/v1/application/SVC-DJ-BPA-BPA_PCO-02?tenantId=dj",
             requestParam: {},
-            requestBody: {
-                inbox: {
-                    processSearchCriteria: {
-                        businessService: [],
-                        moduleName: "public-services",
-                    },
-                    moduleSearchCriteria: {
-                        sortOrder: "ASC",
-                        module: "public-services",
-                    },
-                },
-            },
             minParametersForSearchForm: 0,
             minParametersForFilterForm: 0,
             masterName: "commonUiConfig",
-            moduleName: "InboxGenericConfig",
-            tableFormJsonPath: "requestBody.inbox",
-            filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
-            searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+            moduleName: "CitizenInboxGenericConfig",
+            // tableFormJsonPath: "requestBody.inbox",
+            // filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+            // searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
         },
         sections: {
             search: {
@@ -49,21 +37,6 @@ export const InboxConfig = () => {
                             disable: false,
                             populators: { name: "applicationNumber", error: "Error!", placeholder: `SEARCH_BY_APPLICATION_NUMBER` },
                         },
-                        // {
-                        //     label: `${prefix}_BUSINESS_SERVICE`,
-                        //     isMandatory: true,
-                        //     key: "businessService",
-                        //     type: "dropdown",
-                        //     disable: false,
-                        //     preProcess: {
-                        //         updateDependent: ["populators.options"]
-                        //     },
-                        //     populators: {
-                        //         name: "businessService",
-                        //         optionsKey: "name",
-                        //         options: []
-                        //     }
-                        // },
                     ],
                 },
                 label: "",

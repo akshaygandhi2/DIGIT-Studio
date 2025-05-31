@@ -12,6 +12,7 @@ import InboxService from "./DigitDemo/InboxService";
 import ViewCheckListCards from "./CheckList/viewCheckListCards";
 import CreateCheckList from "./CheckList/createCheckList";
 import ViewApplication from "./CheckList/viewApplication";
+import CitizenInboxService from "./DigitDemo/CitizenInboxService";
 
 const SampleBreadCrumbs = ({ location }) => {
   const { t } = useTranslation();
@@ -45,7 +46,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/:module/:service/ViewScreen`} component={() => <DigitDemoViewComponent />} />
         <PrivateRoute path={`${path}/modules`} component={() => <ModulePageComponent />} />
         <PrivateRoute path={`${path}/:module/inbox`} component={() => <InboxService />} />
-        <PrivateRoute path={`${path}/:module/citizenInbox`} component={() => <InboxService />} />
+        <PrivateRoute path={`${path}/:module/citizenInbox`} component={() => <CitizenInboxService />} />
         <PrivateRoute path={`${path}/viewapp`} component={() => <ViewCheckListCards />} />
         <PrivateRoute path={`${path}/checklist`} component={() => <CreateCheckList />} />
         <PrivateRoute path={`${path}/viewresponse`} component={() => <ViewApplication />} />
