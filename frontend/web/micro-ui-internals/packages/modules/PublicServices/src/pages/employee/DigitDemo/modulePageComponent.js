@@ -138,7 +138,6 @@ const modulePageComponent = ({}) => {
                 width: 100%;
               }
               .request-button {
-                background-color: white;
                 cursor: pointer;
                 color: #006769;
                 border-radius: 10px;
