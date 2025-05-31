@@ -89,6 +89,7 @@ const updateRequest = {
 };
 
 const mutationPut = Digit.Hooks.useCustomAPIMutationHook(updateRequest);
+const checklistStatus = localStorage.getItem('checklistStatus')
 
   const calculateTotalCost = () => {
     return costBreakdown.reduce((total, item) => total + item.amount, 0);
@@ -260,7 +261,7 @@ const mutationPut = Digit.Hooks.useCustomAPIMutationHook(updateRequest);
 
 
   return (
-    <div className="calculation-container">
+    <div className="calculation-container" style={queryStrings?.state !== checklistStatus?.split(".")[1] ? { pointerEvents: "none", opacity:0.7 } : {}}>
       <div className="calculation-wrapper">
         <h1 className="page-title">{t('CALCULATION_TITLE')}</h1>
 
