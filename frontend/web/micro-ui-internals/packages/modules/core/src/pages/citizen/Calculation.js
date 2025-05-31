@@ -100,6 +100,9 @@ const checklistStatus = localStorage.getItem('checklistStatus')
   };
 
   const addFloor = () => {
+    if (floorData.length >= 10) {
+      return;
+    }
     const newFloor = { 
       name: t(`CALCULATION_${floorData.length - 1}ER_ETAGE`), 
       residentialArea: 0, 
@@ -351,7 +354,7 @@ const checklistStatus = localStorage.getItem('checklistStatus')
                 <tr className="button-row">
                   <td colSpan="5">
                     <div className="button-container">
-                      <button className="add-floor-button" onClick={addFloor}>
+                      <button className={`add-floor-button ${floorData?.length >=10 ? "disable-floor-btn" : ""}`} onClick={addFloor}>
                         <h1 className='add-floor-button-title'>{t('CALCULATION_AJOUTER_ETAGE')}</h1>
                         <span className="add-floor-button-icon">+</span>
                       </button>
@@ -726,6 +729,10 @@ const checklistStatus = localStorage.getItem('checklistStatus')
           background-color: #d4d4d4;
           pointer-events: none;
         }
+        .disable-floor-btn{
+          opacity: 0.5;
+          pointer-events: none;
+          }
       `}</style>
     </div>
   );
