@@ -131,8 +131,8 @@ const DigitDemoComponent = () => {
               const userDetails = Digit.UserService.getUser();
               const userType = userDetails?.info?.type?.toLowerCase();
               history.push({
-                pathname: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/response?serviceCode=${schemaCode}`,
-                search: "&isSuccess=true",
+                pathname: `/${window.contextPath}/${userType}/publicservices/${module}/${service}/response`,
+                search: `?serviceCode=${schemaCode}&isSuccess=true`,
                 state: {
                   message: "COMMON_APPLICATION_CREATED",
                   showID: true,
