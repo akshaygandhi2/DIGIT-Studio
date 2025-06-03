@@ -104,7 +104,7 @@ func (i *IndexerService) SendRequestToIndexerForParallelWorkflow(req model.Appli
 
 				if i.kafkaProducer != nil {
 					log.Printf("Sending Kafka message for workflow %s: %s\n", workflow, string(kafkaPayload))
-					err = i.kafkaProducer.Push(context.Background(), os.Getenv(topic), kafkaPayload)
+					err = i.kafkaProducer.Push(context.Background(),topic, kafkaPayload)
 					if err != nil {
 						log.Printf("Failed to push Kafka message for workflow %s: %v\n", workflow, err)
 					}
