@@ -9,7 +9,7 @@ import {
   MultiSelectDropdown,
   Paragraph,
   TextArea,
-  TextInput
+  TextInput,
 } from "../atoms";
 import { ApiDropdown, CustomDropdown, LocationDropdownWrapper, MultiUploadWrapper } from "../molecules";
 import UploadFileComposer from "./UploadFileComposer";
@@ -39,7 +39,7 @@ const FieldComposer = ({
   disable = false,
   noneditable = false,
   focused = false,
-  charCount
+  charCount,
 }) => {
   const { t } = useTranslation();
   let disableFormValidation = false;
@@ -192,7 +192,7 @@ const FieldComposer = ({
         return (
           <Controller
             name={`${populators.name}`}
-            control={control}
+            control={controllerProps?.control}
             rules={{ required: false }}
             render={({ onChange, ref, value = [] }) => {
               function getFileStoreData(filesData) {
@@ -214,7 +214,7 @@ const FieldComposer = ({
                   t={t}
                   module="works"
                   tenantId={Digit.ULBService.getCurrentTenantId()}
-             getFormState={getFileStoreData}
+                  getFormState={getFileStoreData}
                   showHintBelow={populators?.showHintBelow ? true : false}
                   setuploadedstate={value}
                   allowedFileTypesRegex={populators.allowedFileTypes}
@@ -290,23 +290,32 @@ const FieldComposer = ({
             variant={variant ? variant : errors?.[populators.name] ? "digit-field-error" : ""}
           />
         );
-        case "documentUploadAndDownload":
+      case "documentUploadAndDownload":
         return (
-          <UploadAndDownloadDocumentHandler
-            module={config?.module}
-            config={config}
-            // Controller={Controller}        // TODO: NEED TO DISCUSS ON THIS
-            register={controllerProps?.register}
-            formData={formData}
-            errors={errors}
-            control={controllerProps?.control}
-            customClass={config?.customClass}
-            customErrorMsg={config?.error}
-            localePrefix={config?.localePrefix}
-            variant={variant ? variant : errors?.[populators.name] ? "digit-field-error" : ""}
-            flow={populators?.flow}
-            action={populators?.action}
-          />
+          <>
+            <UploadAndDownloadDocumentHandler
+              module={config?.module}
+              config={config}
+              // Controller={Controller}        // TODO: NEED TO DISCUSS ON THIS
+              register={controllerProps?.register}
+              formData={formData}
+              errors={errors}
+              control={controllerProps?.control}
+              customClass={config?.customClass}
+              customErrorMsg={config?.error}
+              localePrefix={config?.localePrefix}
+              variant={variant ? variant : errors?.[populators.name] ? "digit-field-error" : ""}
+              flow={populators?.flow}
+              action={populators?.action}
+              onError={(error) => {
+                console.error("Document upload/download error:", error);
+                // Handle error state
+              }}
+            />
+            {errors?.[populators?.name] && (
+              <ErrorMessage style={{ fontStyle: "normal", color: "#D4351C" }} message={t(config?.customErrorMsg || "ERROR_DOCUMENT_UPLOAD")} />
+            )}
+          </>
         );
       case "form":
         return (
@@ -395,7 +404,7 @@ const FieldComposer = ({
         </CardText>
       );
     }
-  }
+  };
 
   return (
     <>
@@ -411,13 +420,23 @@ const FieldComposer = ({
           {t(config.label)}
           {config?.appendColon ? " : " : null}
           {config.isMandatory ? " * " : null}
-          {config.withoutInfo ? null : <label > ⓘ</label>}
+          {config.withoutInfo ? null : <label> ⓘ</label>}
         </HeaderComponent>
       )}
       <div style={config.withoutLabel ? { width: "100%", ...props?.fieldStyle } : { ...props?.fieldStyle }} className="digit-field">
         {renderField()}
-        <div style={{ color: " #505A5F", width: "23.75rem", display: "flex", justifyContent: "space-between", fontSize: "1rem", marginTop: "-40px", lineHeight: "1.5rem" }}>
-          {config?.description && <CardText >{t(config?.description)}</CardText>}
+        <div
+          style={{
+            color: " #505A5F",
+            width: "23.75rem",
+            display: "flex",
+            justifyContent: "space-between",
+            fontSize: "1rem",
+            marginTop: "-40px",
+            lineHeight: "1.5rem",
+          }}
+        >
+          {config?.description && <CardText>{t(config?.description)}</CardText>}
           {renderCharCount()}
         </div>
         {errors.errorMessage ? (
@@ -427,9 +446,10 @@ const FieldComposer = ({
               fontStyle: "normal",
               color: "#D4351C",
               fontSize: "0.875rem",
-              lineHeight: "1.5rem"
+              lineHeight: "1.5rem",
             }}
-            message={t(errors?.errorMessage)} />
+            message={t(errors?.errorMessage)}
+          />
         ) : null}
         {/* {populators?.name && errors && errors[populators?.name] && Object.keys(errors[populators?.name]).length ? (
           <ErrorMessage style={{fontStyle: "normal",color: "#D4351C" }} message={t(populators?.error)} />

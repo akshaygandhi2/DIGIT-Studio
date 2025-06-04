@@ -12,6 +12,7 @@ import ApplicationDataView from "../../../components/ApplicationDataView";
 const DigitDemoViewComponent = () => {
   const { t } = useTranslation();
   const history = useHistory();
+  const queryStrings = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedBusinessService, setSelectedBusinessService] = useState(null);
   const userInfo = Digit.UserService.getUser();
@@ -20,7 +21,6 @@ const DigitDemoViewComponent = () => {
   const userRoles = userInfo?.info?.roles?.map((roleData) => roleData?.code);
   const [current, setCurrent] = useState(Date.now());
   const [matchedBusinessServices, setMatchedBusinessServices] = useState([]);
-  const queryStrings = Digit.Hooks.useQueryParams();
   const [showOptions, setShowOptions] = useState(false);
   const request = {
     url: `/public-service/v1/application/${queryStrings?.serviceCode}`,
@@ -63,7 +63,7 @@ const DigitDemoViewComponent = () => {
     },
   });
 
-  let config = generateViewConfigFromResponse(response, t, queryStrings?.businessService, serviceConfig);
+  let config = generateViewConfigFromResponse(response, t, queryStrings?.businessService || selectedBusinessService?.code, serviceConfig);
 
   // Extract the required data for ApplicationDataView
   const applicationData = {
@@ -72,8 +72,8 @@ const DigitDemoViewComponent = () => {
     documents: response?.documents || [],
     serviceDetails: {
       landInfo: response?.serviceDetails?.landandProjectDesignDetails?.[0] || {},
-      designOffice: response?.serviceDetails?.designOfficeDetailing?.[0] || {}
-    }
+      designOffice: response?.serviceDetails?.designOfficeDetailing?.[0] || {},
+    },
   };
 
   useEffect(() => {
@@ -116,7 +116,9 @@ const DigitDemoViewComponent = () => {
   };
 
   const handleCalculationClick = () => {
-    history.push({ pathname: `/${window.contextPath}/employee/publicservices/calculation/?applicationNumber=${queryStrings?.applicationNumber}&serviceCode=${queryStrings?.serviceCode}&state=${data?.Application?.[0]?.processInstance?.[0]?.state?.state}`})
+    history.push({
+      pathname: `/${window.contextPath}/employee/publicservices/calculation/?applicationNumber=${queryStrings?.applicationNumber}&serviceCode=${queryStrings?.serviceCode}&state=${data?.Application?.[0]?.processInstance?.[0]?.state?.state}`,
+    });
   };
 
   const handleTemplateDownload = async () => {
@@ -125,7 +127,7 @@ const DigitDemoViewComponent = () => {
         tenantId,
         serviceCode: queryStrings?.serviceCode,
         applicationNumber: queryStrings?.applicationNumber,
-        pdfKey: "pco-permit"
+        pdfKey: "pco-permit",
       };
 
       let url = `/studio-pdf/public-service/download/pdf`;
@@ -160,10 +162,7 @@ const DigitDemoViewComponent = () => {
           }
         };
 
-        downloadPdf(
-          new Blob([response.data], { type: "application/pdf" }),
-          `${queryStrings?.applicationNumber}_receipt.pdf`
-        );
+        downloadPdf(new Blob([response.data], { type: "application/pdf" }), `${queryStrings?.applicationNumber}_receipt.pdf`);
       } catch (err) {
         console.error(err);
         Digit.Toast.error(t("TEMPLATE_DOWNLOAD_FAILED"));
@@ -224,7 +223,7 @@ const DigitDemoViewComponent = () => {
               boxShadow: "1px 5px 7px 2pxrgb(207, 205, 205)",
               borderRadius: "1rem",
               marginBottom: "15px",
-              marginTop:'10px',
+              marginTop: "10px",
               backgroundColor: "rgba(255, 255, 255, var(--bg-opacity))",
             }}
           >
@@ -262,7 +261,7 @@ const DigitDemoViewComponent = () => {
             )}
             <WorkflowActions
               forcedActionPrefix={`WF_${response?.businessService}_ACTION`}
-              businessService={selectedBusinessService?.code || matchedBusinessServices[0]?.code}
+              businessService={queryStrings?.businessService || selectedBusinessService?.code || matchedBusinessServices[0]?.code}
               applicationNo={response?.applicationNumber}
               tenantId={tenantId}
               applicationDetails={response}

@@ -511,13 +511,14 @@ export const getDetailsByIdWorks = async ({ tenantId, id, moduleCode }) => {
 
       await makeCommentsSubsidariesOfPreviousActionsWorks(processInstances);
 
-      let timeline = processInstances.map((instance, ind) => {
+      let timeline = processInstances?.map((instance, ind) => {
         let checkPoint = {
           performedAction: instance.action,
           status: instance.state.applicationStatus,
           state: instance.state.state,
           assigner: instance?.assigner,
           rating: instance?.rating,
+          businessService: instance?.businessService,
           // wfComment: instance?.wfComments?.map(e => e?.comment),
           comment: instance?.comment,
           wfDocuments: instance?.documents,
@@ -634,12 +635,14 @@ const makeCommentsSubsidariesOfPreviousActionsWorks = async (wf) => {
   }
 };
 
-export const downloadStudioPDF = async (
-  pdfRoute,
-  queryParams = {},
-  fileName = "application.pdf"
-) => {
-  const response = await Digit.CustomService.getResponse({ url: `/studio-pdf/download/${pdfRoute}`, params: queryParams, useCache: false, setTimeParam: false, userDownload: true })
+export const downloadStudioPDF = async (pdfRoute, queryParams = {}, fileName = "application.pdf") => {
+  const response = await Digit.CustomService.getResponse({
+    url: `/studio-pdf/download/${pdfRoute}`,
+    params: queryParams,
+    useCache: false,
+    setTimeParam: false,
+    userDownload: true,
+  });
   const responseStatus = parseInt(response.status, 10);
   if (responseStatus === 201 || responseStatus === 200) {
     downloadPdf(new Blob([response.data], { type: "application/pdf" }), fileName);

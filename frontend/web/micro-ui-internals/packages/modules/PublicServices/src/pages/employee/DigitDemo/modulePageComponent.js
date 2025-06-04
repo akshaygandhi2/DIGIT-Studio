@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
 import { transformResponseforModulePage } from "../../../utils";
 
-const modulePageComponent = ({}) => {
+const ModulePageComponent = () => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -23,6 +23,7 @@ const modulePageComponent = ({}) => {
   const { isLoading, data } = Digit.Hooks.useCustomAPIHook(request);
 
   let detailsConfig = data ? transformResponseforModulePage(data?.Services) : [];
+  const hasNoData = detailsConfig.length === 0 && !isLoading;
 
   const userDetails = Digit.UserService.getUser();
   const userType = userDetails?.info?.type?.toLowerCase();
@@ -30,6 +31,15 @@ const modulePageComponent = ({}) => {
 
   if (isLoading) {
     return <Loader />;
+  }
+
+  if (hasNoData) {
+    return (
+      <div className="products-container">
+        <HeaderComponent className="products-title">{t("DIGIT_STUDIO_HEADER")}</HeaderComponent>
+        <CardText>{t("NO_SERVICES_AVAILABLE")}</CardText>
+      </div>
+    );
   }
 
   return (
@@ -54,10 +64,11 @@ const modulePageComponent = ({}) => {
                   </div>
                   <div className="">
                     <Link
+                      key={bs?.businessService}
                       className="link request-button"
                       to={`/${window.contextPath}/${userType}/publicservices/${product.module}/${bs.businessService}/Apply?serviceCode=${bs?.serviceCode}`}
                     >
-                      {t(bs.businessService)}
+                      {t(bs?.businessService)}
                     </Link>
                   </div>
                 </Card>
@@ -153,4 +164,4 @@ const modulePageComponent = ({}) => {
   );
 };
 
-export default modulePageComponent;
+export default ModulePageComponent;

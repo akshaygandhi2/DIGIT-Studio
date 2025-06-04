@@ -161,9 +161,17 @@ const WorkflowActions = ({
       //     redirectionUrl: `/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}`,
       //   }
       // );
-      const redirectionUrl = `/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${queryStrings?.serviceCode}`;
+      const redirectionUrl = `/${
+        window.contextPath
+      }/${Digit.UserService.getType()?.toLowerCase()}/publicservices/${module}/${service}/ViewScreen?applicationNumber=${applicationNo}&serviceCode=${
+        queryStrings?.serviceCode
+      }`;
 
-      window.location = `/${window.contextPath}/${Digit.UserService.getType()?.toLowerCase()}/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${props?.serviceConfig?.data?.bill?.BusinessService?.code}&redirectUrl=${encodeURIComponent(redirectionUrl)}`;
+      window.location = `/${
+        window.contextPath
+      }/${Digit.UserService.getType()?.toLowerCase()}/openpayment/open-view?consumerCode=${applicationNo}&tenantId=${tenantId}&businessService=${
+        props?.serviceConfig?.data?.bill?.BusinessService?.code
+      }&redirectUrl=${encodeURIComponent(redirectionUrl)}`;
     }
 
     //here check if actin is edit then do a history.push acc to the businessServ and action
@@ -239,7 +247,7 @@ const WorkflowActions = ({
   };
 
   //if workflowDetails are loading then a loader is displayed in workflowTimeline comp anyway
-  if (isEnableLoader) {
+  if (isEnableLoader || workflowDetails?.isLoading) {
     return <Loader />;
   }
 
@@ -274,17 +282,15 @@ const WorkflowActions = ({
                   ></Button>,
                 ]
               : [
-                 <CustomActionDropdown
-  workflowDetails={workflowDetails}
-  actions={actions}
-  isDisabled={isDisabled}
-  onActionSelect={onActionSelect}
-  module={module}
-  service={service}
-  menuStyles={MenuStyle}
-/>
-
-                  ,
+                  <CustomActionDropdown
+                    workflowDetails={workflowDetails}
+                    actions={actions}
+                    isDisabled={isDisabled}
+                    onActionSelect={onActionSelect}
+                    module={module}
+                    service={service}
+                    menuStyles={MenuStyle}
+                  />,
                 ]
           }
           setactionFieldsToRight={true}

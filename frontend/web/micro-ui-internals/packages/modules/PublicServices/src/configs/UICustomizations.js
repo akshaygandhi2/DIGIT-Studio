@@ -66,7 +66,7 @@ export const UICustomizations = {
       if (custom?.applicationNumber) data.params.applicationNumber = custom?.applicationNumber;
       if (custom?.status) data.params.status = custom?.status;
       if (custom?.todate) data.params.todate = Digit.Utils.date.convertDateToEpoch(custom?.todate);
-      if (custom?.fromdate) data.params.todate = Digit.Utils.date.convertDateToEpoch(custom?.fromdate);
+      if (custom?.fromdate) data.params.fromdate = Digit.Utils.date.convertDateToEpoch(custom?.fromdate);
       if (data?.state?.searchForm?.businessService) data.url = `${data.url}/${data?.state?.searchForm?.businessService?.serviceCode}`;
       if (data?.state?.searchForm?.businessService) data.config = { enabled: true };
       delete data.body.SearchCriteria.custom;
@@ -122,7 +122,9 @@ export const UICustomizations = {
     footerActionHandler: (index, event) => {}, // footerActionHandler : Is used to handle onclick functions of footer action buttons, gets index and event as props
     linkColumnHandler: (row) => {
       const url = `/${window.contextPath}/${userType}/microplan/view-main?tenantId=${row?.tenantId}&uniqueIdentifier=${row?.uniqueIdentifier}`;
-      window.location.href = url;
+      const history = useHistory();
+      history.push(url);
+      //window.location.href = url;
     },
   },
 
@@ -178,11 +180,7 @@ export const UICustomizations = {
         );
       }
       if (key === "BUSINESS_SERVICE_LABEL") {
-        return (
-          <div>
-            {t(`${row?.businessObject?.businessService}`)}
-          </div>
-        );
+        return <div>{t(`${row?.businessObject?.businessService}`)}</div>;
       }
     },
     selectionHandler: (event) => {}, // selectionHandler : Is used to handle row selections. gets on object which containes 3 key value pairs:  allSelected(whether all rows are selected or not), selectedCount (no, of rows selected),selectedRows( an array of selected rows)

@@ -143,7 +143,14 @@ const DigitDemoComponent = () => {
             }
           },
           onError: () => {
-            <Toast label={t("COMMON_APPLICATION_FAILED")} />;
+            history.push({
+              pathname: `/${window.contextPath}/employee/publicservices/${module}/${service}/response`,
+              search: "?isSuccess=false",
+              state: {
+                message: "COMMON_APPLICATION_FAILED",
+                showID: false,
+              },
+            });
           },
         }
       );

@@ -2,7 +2,6 @@ import { AddressFields } from "./templateConfig";
 import { ApplicantFields } from "./templateConfig";
 import { documentFields } from "./templateConfig";
 
-
 const createSummaryForm = () => {
   return {
     head: "BPA_BPA_PCO_SUMMARY",
@@ -14,8 +13,7 @@ const createSummaryForm = () => {
 export const generateFormConfig = (config, module, service) => {
   const serviceFields = config?.ServiceConfiguration?.[0]?.fields || [];
 
-  const sortByOrderNumber = (fields = []) =>
-    [...fields].sort((a, b) => (a.orderNumber || 999) - (b.orderNumber || 999));
+  const sortByOrderNumber = (fields = []) => [...fields].sort((a, b) => (a.orderNumber || 999) - (b.orderNumber || 999));
 
   const createField = (field) => {
     return {
@@ -34,8 +32,8 @@ export const generateFormConfig = (config, module, service) => {
         prefix: field.prefix,
         reference: field.reference,
         dependencies: field.dependencies,
-        label:field.label,
-        placeholder:field.placeholder,
+        label: field.label,
+        placeholder: field.placeholder,
         minLength: field?.minLength,
         maxLength: field?.maxLength,
         min: field?.min,
@@ -49,14 +47,19 @@ export const generateFormConfig = (config, module, service) => {
               },
             }
           : {}),
-          ...(field?.reference === "enum"
+        ...(field?.reference === "enum"
           ? {
-              options: field?.values?.map((ob) => ({"code" : ob.toUpperCase(), name: `${module}_${service}_${field.name.toUpperCase()}_${ob.toUpperCase()}`})),
+              options: field?.values?.map((ob) => ({
+                code: ob.toUpperCase(),
+                name: `${module}_${service}_${field.name.toUpperCase()}_${ob.toUpperCase()}`,
+              })),
             }
           : {}),
       },
     };
   };
+
+  let dynamicStep = 1;
 
   const createChildForm = (objectField) => {
     return {
@@ -64,7 +67,7 @@ export const generateFormConfig = (config, module, service) => {
       name: objectField.name,
       body: sortByOrderNumber(objectField.properties).map((subField) => createField(subField)),
       type: "childform",
-      step: 1,
+      step: dynamicStep++,
     };
   };
 
@@ -75,16 +78,15 @@ export const generateFormConfig = (config, module, service) => {
       type: "multiChildForm",
       prefix: `${module}_${service}`,
       body: sortByOrderNumber(arrayField.items.properties).map((subField) => createField(subField)),
-      step: 2,
+      step: dynamicStep++,
     };
   };
 
   const getDocumentFields = (documentField) => {
     return {
       head: `${module}_${service}_${documentField.head.toUpperCase()}`,
-      "type": "documents",
-      body: [{...documentField?.body?.[0], localePrefix: `${module.toUpperCase()}_${service.toUpperCase()}_${documentField.head.toUpperCase()}`}],
-
+      type: "documents",
+      body: [{ ...documentField?.body?.[0], localePrefix: `${module.toUpperCase()}_${service.toUpperCase()}_${documentField.head.toUpperCase()}` }],
     };
   };
 
@@ -125,11 +127,7 @@ export const generateFormConfig = (config, module, service) => {
     });
   }
 
-  const documentform =
-    config?.ServiceConfiguration?.[0]?.documents && documentFields?.[0]
-      ? getDocumentFields(documentFields[0])
-      : {};
-
+  const documentform = config?.ServiceConfiguration?.[0]?.documents && documentFields?.[0] ? getDocumentFields(documentFields[0]) : {};
 
   const summaryForm = createSummaryForm();
 
