@@ -22,9 +22,9 @@ const CreateCheckList = () => {
   const [shouldUpdate, setShouldUpdate] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showToast, setShowToast] = useState(null);
-  const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const [config, setConfig] = useState(null);
+  const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const closeToast = () => {
     setTimeout(() => {
@@ -174,7 +174,7 @@ const CreateCheckList = () => {
         {
           onSuccess: (res) => {
             console.log(res, "application_response");
-            setShowToast({ label: Digit.Utils.locale.getTransformedLocale(`${code?.replaceAll(".", "_").toUpperCase()}_CREATE_SUCCESS_CHECKLIST`) });
+            setShowToast({ label: Digit.Utils.locale.getTransformedLocale(`${code?.replaceAll(".", "_").toUpperCase()}_SUBMIT_SUCCESS_CHECKLIST`) });
             setTimeout(() => {
               window.history.back();
             }, 3000);
@@ -214,6 +214,12 @@ const CreateCheckList = () => {
           console.log(res, "application_response");
           if (action == "SAVE_AS_DRAFT") {
             setShowToast({ label: Digit.Utils.locale.getTransformedLocale(`${code?.replaceAll(".", "_").toUpperCase()}_CREATE_SUCCESS_CHECKLIST`) });
+            setTimeout(() => {
+              window.history.back();
+            }, 3000);
+          }
+          if (action == "SUBMIT") {
+            setShowToast({ label: Digit.Utils.locale.getTransformedLocale(`${code?.replaceAll(".", "_").toUpperCase()}_SUBMIT_SUCCESS_CHECKLIST`) });
             setTimeout(() => {
               window.history.back();
             }, 3000);
@@ -260,27 +266,22 @@ const CreateCheckList = () => {
   };
 
   return (
-
     <div>
       {config && loading ? (
-       <div  style={
-         (state !== code.split(".")[1])
-      ? { pointerEvents: 'none', opacity: 0.7 }
-      : {}
-  }>
-        <FormComposerV2
-          defaultValues={defValues}
-          label={t("BPA_SUBMIT")}
-          config={config}
-          onFormValueChange={(setValue, formData) => {
-            handleFormValueChange(formData);
-          }}
-          onSubmit={onSubmit}
-          fieldStyle={{ marginRight: 2 }}
-          draftLabel={t("BPA_SAVE_AS_DRAFT")}
-          onDraftLabelClick={onSaveAsDraft}
-          heading={t(`CHECKLIST_HEADING`)}
-        />
+        <div style={state !== code.split(".")[1] ? { pointerEvents: "none", opacity: 0.7 } : {}}>
+          <FormComposerV2
+            defaultValues={defValues}
+            label={t("BPA_SUBMIT")}
+            config={config}
+            onFormValueChange={(setValue, formData) => {
+              handleFormValueChange(formData);
+            }}
+            onSubmit={onSubmit}
+            fieldStyle={{ marginRight: 2 }}
+            draftLabel={t("BPA_SAVE_AS_DRAFT")}
+            onDraftLabelClick={onSaveAsDraft}
+            heading={t(`CHECKLIST_HEADING`)}
+          />
         </div>
       ) : (
         <Loader />
