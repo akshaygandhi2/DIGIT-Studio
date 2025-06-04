@@ -1,35 +1,45 @@
-import { Loader,StatusTable,Row,Card,Header,SubmitBar,ActionBar,Toast } from '@egovernments/digit-ui-react-components';
-import React,{Fragment,useEffect,useState} from 'react'
+import { Loader, StatusTable, Row, Card, Header, SubmitBar, ActionBar, Toast } from "@egovernments/digit-ui-react-components";
+import React, { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { makePayment } from '../utils/payGov';
-import  { CustomisedHooks } from "../hooks";
+import { makePayment } from "../utils/payGov";
+import { CustomisedHooks } from "../hooks";
 import $ from "jquery";
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from "react-router-dom";
 
 const OpenView = () => {
   const { t } = useTranslation();
-  const [showToast,setShowToast] = useState(null)
+  const [showToast, setShowToast] = useState(null);
   const queryParams = Digit.Hooks.useQueryParams();
   const mutation = CustomisedHooks?.Hooks?.openpayment?.useCreatePayment();
   const history = useHistory();
   const { state } = useLocation();
 
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(null);
+      }, 4000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
+
   const requestCriteria = {
-    url:"/billing-service/bill/v2/_fetchbill",
-    params:queryParams,
-    body:{},
-    options:{
-      userService:true,
-      auth:true
+    url: "/billing-service/bill/v2/_fetchbill",
+    params: queryParams,
+    body: {},
+    options: {
+      userService: true,
+      auth: true,
     },
     config: {
-        enabled: !!queryParams.consumerCode && !!queryParams.tenantId && !!queryParams.businessService,
-        select:(data) => {
-          return data?.Bill?.[0]
-        }
+      enabled: !!queryParams.consumerCode && !!queryParams.tenantId && !!queryParams.businessService,
+      select: (data) => {
+        return data?.Bill?.[0];
+      },
     },
-  }
-  const { isLoading, data:bill, revalidate,isFetching,error } = Digit.Hooks.useCustomAPIHook(requestCriteria);
+  };
+  const { isLoading, data: bill, revalidate, isFetching, error } = Digit.Hooks.useCustomAPIHook(requestCriteria);
 
   const arrears =
     bill?.billDetails
@@ -37,8 +47,7 @@ const OpenView = () => {
       ?.reduce((total, current, index) => (index === 0 ? total : total + current.amount), 0) || 0;
 
   const onSubmit = async () => {
-    if(window.location.href.includes("employee"))
-    {
+    if (window.location.href.includes("employee")) {
       const body = {
         Payment: {
           // mobileNumber: paymentData.mobileNumber,
@@ -71,23 +80,29 @@ const OpenView = () => {
           paymentMode: "CASH",
           payerName: bill?.payerName,
           paidBy: "OWNER",
-        }
+        },
       };
 
       mutation.mutate(
         {
           url: `/collection-services/payments/_create?tenantId=${queryParams.tenantId}`,
           body,
-          headers:{ "X-Tenant-Id": queryParams.tenantId }
+          headers: { "X-Tenant-Id": queryParams.tenantId },
         },
         {
           onSuccess: (data) => {
-
-            if (data?.Payments?.[0].paymentDetails[0].businessService && data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode && data?.Payments?.[0]?.tenantId) {
-              history.push(`/${window.contextPath}/employee/openpayment/success/${data?.Payments?.[0].paymentDetails[0].businessService}/${data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode}/${data?.Payments?.[0]?.tenantId}`,{iSuccess:true, applicationNumber:data?.Payments?.[0].paymentDetails?.[0]?.receiptNumber,...state});
+            if (
+              data?.Payments?.[0].paymentDetails[0].businessService &&
+              data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode &&
+              data?.Payments?.[0]?.tenantId
+            ) {
+              history.push(
+                `/${window.contextPath}/employee/openpayment/success/${data?.Payments?.[0].paymentDetails[0].businessService}/${data?.Payments?.[0].paymentDetails?.[0]?.bill?.consumerCode}/${data?.Payments?.[0]?.tenantId}`,
+                { iSuccess: true, applicationNumber: data?.Payments?.[0].paymentDetails?.[0]?.receiptNumber, ...state }
+              );
               //setHasRedirected(true);  // Mark that redirection has happened
             } else {
-             history.push(`/${window.contextPath}/employee/openpayment/failure`,{iSuccess:false,...state});
+              history.push(`/${window.contextPath}/employee/openpayment/failure`, { iSuccess: false, ...state });
               console.error("Missing redirect data in payment response");
             }
           },
@@ -97,7 +112,7 @@ const OpenView = () => {
         }
       );
     }
-    if(!window.location.href.includes("employee")){
+    if (!window.location.href.includes("employee")) {
       const filterData = {
         Transaction: {
           tenantId: bill?.tenantId,
@@ -114,10 +129,10 @@ const OpenView = () => {
             },
           ],
           user: {
-            name:  bill?.payerName,
-            mobileNumber:  bill?.mobileNumber,
+            name: bill?.payerName,
+            mobileNumber: bill?.mobileNumber,
             tenantId: bill?.tenantId,
-            emailId: bill?.payerEmail
+            emailId: bill?.payerEmail,
           },
           // success
           // callbackUrl: `${window.location.protocol}//${window.location.host}/${window.contextPath}/citizen/openpayment/success?consumerCode=${queryParams.consumerCode}&tenantId=${queryParams.tenantId}&businessService=${queryParams.businessService}`,
@@ -126,95 +141,100 @@ const OpenView = () => {
             isWhatsapp: false,
           },
         },
-        RequestInfo:{
+        RequestInfo: {
           apiId: "Rainmaker",
           authToken: Digit.UserService.getUser()?.access_token,
           userInfo: Digit.UserService.getUser()?.info,
           msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
-        }
+        },
       };
 
       try {
-
         mutation.mutate(
           {
             url: `/pg-service/transaction/v1/_create?tenantId=${bill?.tenantId}`,
             body: filterData,
-            headers:{ "X-Tenant-Id": bill?.tenantId }
+            headers: { "X-Tenant-Id": bill?.tenantId },
           },
           {
             onSuccess: (data) => {
               const redirectUrl = data?.Transaction?.redirectUrl;
               window.location = redirectUrl;
-
             },
-            onError: () => {
-              <Toast label={t("CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER")} />;
+            onError: (error) => {
+              let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
+              if (error.response?.data?.Errors?.[0]) {
+                const { code, message } = error.response?.data?.Errors?.[0];
+                messageToShow = code;
+              } else if (error.message) {
+                messageToShow = error.message;
+              }
+              setShowToast({ key: true, label: t(messageToShow) });
             },
           }
         );
         //dummy response
-      //   const data = {
-      //     "ResponseInfo": {
-      //         "apiId": "Rainmaker",
-      //         "ver": null,
-      //         "ts": null,
-      //         "resMsgId": "uief87324",
-      //         "msgId": "1718644477119|en_IN",
-      //         "status": "SUCCESSFUL"
-      //     },
-      //     "Transaction": {
-      //         "tenantId": "pb.abianakhurd",
-      //         "txnAmount": "160",
-      //         "billId": "3b27460b-d37e-4e0d-bd51-ed32f12e90e3",
-      //         "module": "WS",
-      //         "consumerCode": "WS/7141/2024-25/0316",
-      //         "taxAndPayments": [
-      //             {
-      //                 "taxAmount": null,
-      //                 "amountPaid": 160,
-      //                 "billId": "3b27460b-d37e-4e0d-bd51-ed32f12e90e3"
-      //             }
-      //         ],
-      //         "productInfo": "Common Payment",
-      //         "gateway": "PAYGOV",
-      //         "callbackUrl": "http://localhost:3000/mgramseva-web/employee/hrms/success?consumerCode=WS/7141/2024-25/0316&tenantId=pb.abianakhurd&businessService=WS&eg_pg_txnid=PB_PG_2024_06_17_0367_81",
-      //         "txnId": "PB_PG_2024_06_17_0367_81",
-      //         "user": {
-      //             "uuid": "e18c2f5b-6035-4360-885b-dfd28b1159f0",
-      //             "name": "hj",
-      //             "userName": "9379239289",
-      //             "mobileNumber": "9379239289",
-      //             "emailId": null,
-      //             "tenantId": "pb"
-      //         },
-      //         "redirectUrl": "https://pilot.surepay.ndml.in/SurePayPayment/sp/processRequest?additionalField3=pb.abianakhurd&orderId=PB_PG_2024_06_17_0367_81&additionalField4=WS/7141/2024-25/0316&requestDateTime=17-06-202417:14:078&additionalField5=WSabianakhurd&successUrl=https://mgramseva-uat.psegs.in/pg-service/transaction/v1/_redirect?originalreturnurl=/mgramseva-web/employee/hrms/success?consumerCode=WS/7141/2024-25/0316&tenantId=pb.abianakhurd&businessService=WS&eg_pg_txnid=PB_PG_2024_06_17_0367_81&failUrl=https://mgramseva-uat.psegs.in/pg-service/transaction/v1/_redirect?originalreturnurl=/mgramseva-web/employee/hrms/success?consumerCode=WS/7141/2024-25/0316&tenantId=pb.abianakhurd&businessService=WS&eg_pg_txnid=PB_PG_2024_06_17_0367_81&txURL=https://pilot.surepay.ndml.in/SurePayPayment/sp/processRequest&messageType=0100&merchantId=UATPWSSG0000001429&transactionAmount=160&customerId=e18c2f5b-6035-4360-885b-dfd28b1159f0&checksum=3463857141&additionalField1=9379239289&additionalField2=111111&serviceId=WSabianakhurd&currencyCode=INR",
-      //         "txnStatus": "PENDING",
-      //         "txnStatusMsg": "Transaction initiated",
-      //         "gatewayTxnId": null,
-      //         "gatewayPaymentMode": null,
-      //         "gatewayStatusCode": null,
-      //         "gatewayStatusMsg": null,
-      //         "receipt": null,
-      //         "auditDetails": {
-      //             "createdBy": "d158721b-5c25-421b-8c26-c63cf5d38825",
-      //             "createdTime": 1718644478078,
-      //             "lastModifiedBy": null,
-      //             "lastModifiedTime": null
-      //         },
-      //         "additionalDetails": {
-      //             "isWhatsapp": false,
-      //             "taxAndPayments": [
-      //                 {
-      //                     "taxAmount": null,
-      //                     "amountPaid": 160,
-      //                     "billId": "3b27460b-d37e-4e0d-bd51-ed32f12e90e3"
-      //                 }
-      //             ]
-      //         },
-      //         "bankTransactionNo": null
-      //     }
-      // }
+        //   const data = {
+        //     "ResponseInfo": {
+        //         "apiId": "Rainmaker",
+        //         "ver": null,
+        //         "ts": null,
+        //         "resMsgId": "uief87324",
+        //         "msgId": "1718644477119|en_IN",
+        //         "status": "SUCCESSFUL"
+        //     },
+        //     "Transaction": {
+        //         "tenantId": "pb.abianakhurd",
+        //         "txnAmount": "160",
+        //         "billId": "3b27460b-d37e-4e0d-bd51-ed32f12e90e3",
+        //         "module": "WS",
+        //         "consumerCode": "WS/7141/2024-25/0316",
+        //         "taxAndPayments": [
+        //             {
+        //                 "taxAmount": null,
+        //                 "amountPaid": 160,
+        //                 "billId": "3b27460b-d37e-4e0d-bd51-ed32f12e90e3"
+        //             }
+        //         ],
+        //         "productInfo": "Common Payment",
+        //         "gateway": "PAYGOV",
+        //         "callbackUrl": "http://localhost:3000/mgramseva-web/employee/hrms/success?consumerCode=WS/7141/2024-25/0316&tenantId=pb.abianakhurd&businessService=WS&eg_pg_txnid=PB_PG_2024_06_17_0367_81",
+        //         "txnId": "PB_PG_2024_06_17_0367_81",
+        //         "user": {
+        //             "uuid": "e18c2f5b-6035-4360-885b-dfd28b1159f0",
+        //             "name": "hj",
+        //             "userName": "9379239289",
+        //             "mobileNumber": "9379239289",
+        //             "emailId": null,
+        //             "tenantId": "pb"
+        //         },
+        //         "redirectUrl": "https://pilot.surepay.ndml.in/SurePayPayment/sp/processRequest?additionalField3=pb.abianakhurd&orderId=PB_PG_2024_06_17_0367_81&additionalField4=WS/7141/2024-25/0316&requestDateTime=17-06-202417:14:078&additionalField5=WSabianakhurd&successUrl=https://mgramseva-uat.psegs.in/pg-service/transaction/v1/_redirect?originalreturnurl=/mgramseva-web/employee/hrms/success?consumerCode=WS/7141/2024-25/0316&tenantId=pb.abianakhurd&businessService=WS&eg_pg_txnid=PB_PG_2024_06_17_0367_81&failUrl=https://mgramseva-uat.psegs.in/pg-service/transaction/v1/_redirect?originalreturnurl=/mgramseva-web/employee/hrms/success?consumerCode=WS/7141/2024-25/0316&tenantId=pb.abianakhurd&businessService=WS&eg_pg_txnid=PB_PG_2024_06_17_0367_81&txURL=https://pilot.surepay.ndml.in/SurePayPayment/sp/processRequest&messageType=0100&merchantId=UATPWSSG0000001429&transactionAmount=160&customerId=e18c2f5b-6035-4360-885b-dfd28b1159f0&checksum=3463857141&additionalField1=9379239289&additionalField2=111111&serviceId=WSabianakhurd&currencyCode=INR",
+        //         "txnStatus": "PENDING",
+        //         "txnStatusMsg": "Transaction initiated",
+        //         "gatewayTxnId": null,
+        //         "gatewayPaymentMode": null,
+        //         "gatewayStatusCode": null,
+        //         "gatewayStatusMsg": null,
+        //         "receipt": null,
+        //         "auditDetails": {
+        //             "createdBy": "d158721b-5c25-421b-8c26-c63cf5d38825",
+        //             "createdTime": 1718644478078,
+        //             "lastModifiedBy": null,
+        //             "lastModifiedTime": null
+        //         },
+        //         "additionalDetails": {
+        //             "isWhatsapp": false,
+        //             "taxAndPayments": [
+        //                 {
+        //                     "taxAmount": null,
+        //                     "amountPaid": 160,
+        //                     "billId": "3b27460b-d37e-4e0d-bd51-ed32f12e90e3"
+        //                 }
+        //             ]
+        //         },
+        //         "bankTransactionNo": null
+        //     }
+        // }
         // const redirectUrl = data?.Transaction?.redirectUrl;
         //   // paygov
         //   try {
@@ -283,9 +303,8 @@ const OpenView = () => {
         //     //window.location = redirectionUrl;
         //   }
 
-       // window.location = redirectUrl;
-      } 
-      catch (error) {
+        // window.location = redirectUrl;
+      } catch (error) {
         let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
         if (error.response?.data?.Errors?.[0]) {
           const { code, message } = error.response?.data?.Errors?.[0];
@@ -294,23 +313,41 @@ const OpenView = () => {
         setShowToast({ key: true, label: t(messageToShow) });
       }
     }
+  };
 
-
-  }
-
-  if(isLoading){
-    return <Loader />
+  if (isLoading) {
+    return <Loader />;
   }
   return (
-    <div style={{ backgroundColor: "white", borderRadius: "15px"}} className="digit-results-table-wrapper">
-      <div style={{width: "100%", padding: "20px",marginLeft: "20px"}}>
+    <div style={{ backgroundColor: "white", borderRadius: "15px" }} className="digit-results-table-wrapper">
+      <div style={{ width: "100%", padding: "20px", marginLeft: "20px" }}>
         <Header style={{ marginBottom: "20px" }}>{t("OP_PAYMENT_DETAILS")}</Header>
         <StatusTable>
-          <div style={{marginTop: "16px"}}>
-            <Row label={t("OP_CONSUMER_NAME")} text={bill?.payerName || t("ES_COMMON_NA")} textStyle={{ paddingLeft: "12px", textAlign: "right", }} labelStyle={{fontWeight: "bold", fontSize: "16px"}} />
-            <Row label={t("OP_CONSUMER_EMAIL")} text={bill?.payerEmail || t("ES_COMMON_NA")} textStyle={{ paddingLeft: "12px", textAlign: "right", }} labelStyle={{fontWeight: "bold", fontSize: "16px"}} />
-            <Row label={t("OP_CONSUMER_ADDRESS")} text={bill?.payerAddress || t("ES_COMMON_NA")} textStyle={{ paddingLeft: "12px", textAlign: "right", }} labelStyle={{fontWeight: "bold", fontSize: "16px"}} />
-            <Row label={t("OP_CONSUMER_PHNO")} text={bill?.mobileNumber || t("ES_COMMON_NA")} textStyle={{ paddingLeft: "12px", textAlign: "right", }} labelStyle={{fontWeight: "bold", fontSize: "16px"}} />
+          <div style={{ marginTop: "16px" }}>
+            <Row
+              label={t("OP_CONSUMER_NAME")}
+              text={bill?.payerName || t("ES_COMMON_NA")}
+              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+            />
+            <Row
+              label={t("OP_CONSUMER_EMAIL")}
+              text={bill?.payerEmail || t("ES_COMMON_NA")}
+              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+            />
+            <Row
+              label={t("OP_CONSUMER_ADDRESS")}
+              text={bill?.payerAddress || t("ES_COMMON_NA")}
+              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+            />
+            <Row
+              label={t("OP_CONSUMER_PHNO")}
+              text={bill?.mobileNumber || t("ES_COMMON_NA")}
+              textStyle={{ paddingLeft: "12px", textAlign: "right" }}
+              labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+            />
           </div>
 
           <div style={{ margin: "24px 0" }}>
@@ -326,8 +363,8 @@ const OpenView = () => {
                 .map((amountDetails, index) => (
                   <Row
                     key={index + "taxheads"}
-                      labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-                textStyle={{ fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
+                    labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+                    textStyle={{ fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
                     label={t(amountDetails.taxHeadCode)}
                     text={"FDj " + amountDetails.amount?.toFixed(0)}
                   />
@@ -336,13 +373,13 @@ const OpenView = () => {
 
             {arrears?.toFixed?.(2) ? (
               <div style={{ margin: "16px 0", paddingTop: "16px" }}>
-              <Row
-                labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
-                textStyle={{ fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
-                label={t("COMMON_ARREARS")}
-                text={"FDj " + arrears?.toFixed?.(0) || Number(0).toFixed(0)}
-              />
-            </div>
+                <Row
+                  labelStyle={{ fontWeight: "bold", fontSize: "16px" }}
+                  textStyle={{ fontSize: "18px", textAlign: "right", color: "#0B0C0C" }}
+                  label={t("COMMON_ARREARS")}
+                  text={"FDj " + arrears?.toFixed?.(0) || Number(0).toFixed(0)}
+                />
+              </div>
             ) : null}
 
             <div style={{ borderTop: "1px solid #D6D5D4", margin: "16px 0", paddingTop: "16px" }}>
@@ -355,7 +392,7 @@ const OpenView = () => {
             </div>
           </div>
 
-          <div style={{ marginTop: "24px", width: "100%" ,display: "flex", justifyContent: "end"}}>
+          <div style={{ marginTop: "24px", width: "100%", display: "flex", justifyContent: "end" }}>
             <SubmitBar
               style={{
                 // width: "100%",
@@ -380,7 +417,7 @@ const OpenView = () => {
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default OpenView
+export default OpenView;
