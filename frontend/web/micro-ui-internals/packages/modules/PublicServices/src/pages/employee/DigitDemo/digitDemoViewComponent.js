@@ -440,12 +440,12 @@ const DigitDemoViewComponent = () => {
                         <div
                           style={{
                             marginTop: "0.5rem",
-                            border: `1px solid ${isCurrentState ? "#C84C0E" : "#e5e7eb"}`,
+                            border: "1px solid #e5e7eb",
                             padding: "0.75rem",
                             borderRadius: "0.5rem",
                             fontSize: "0.85rem",
                             color: "#505A5F",
-                            backgroundColor: isCurrentState ? "rgba(200, 76, 14, 0.05)" : "#f9fafb",
+                            backgroundColor: "#f9fafb",
                             wordBreak: "break-word",
                             fontFamily: "Inter",
                           }}
@@ -455,13 +455,15 @@ const DigitDemoViewComponent = () => {
                               display: "block",
                               marginBottom: "0.25rem",
                               marginTop: "5px",
-                              color: isCurrentState ? "#C84C0E" : "inherit",
+                              color: "black",
                               fontFamily: "Inter",
+                              fontSize: "14px",
+                              fontWeight: "400",
                             }}
                           >
                             {t("COMMENT")}
                           </strong>
-                          {instance?.comment}
+                          "{instance?.comment}"
                         </div>
                       )}
                       {instance?.assignes?.length > 0 && (
