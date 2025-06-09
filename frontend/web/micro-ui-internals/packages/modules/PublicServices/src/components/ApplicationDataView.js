@@ -197,7 +197,7 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
                       fill="#505A5F"
                     />
                   </svg>
-                  <span className="file-name">{doc.id}</span>
+                  <span className="file-name">{t(doc?.documentType)}</span>
                   <div className="footer-buttons-wrapper">
                     <button
                       style={{ width: "auto", marginLeft: "auto" }}
