@@ -114,7 +114,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
                 <div className="field-label" style={{ width: "65%"}}>
                   {t(docType)}
                 </div>
-                <div className="field-value">
+                <div className="field-value" style={{ width: "45%" }}>
                   {files.map(([fileName, fileData], index) => (
                     <div key={index} className="document-item">
                       <svg width="27" height="34" viewBox="0 0 27 34" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -124,7 +124,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
                         />
                       </svg>
 
-                      <span className="file-name">{fileName}</span>
+                      <span className="file-name">{t(fileName)}</span>
                       <div className="footer-buttons-wrapper">
                         <button
                           style={{ width: "auto", marginLeft: "auto" }}
@@ -214,6 +214,7 @@ const SummaryView = ({ formData, t, serviceCode, onSubmit, onPrevious }) => {
           flex-direction: column;
           flex-wrap: wrap;
           align-content: flex-start;
+          text-align: center;
         }
         .file-name {
           color: #505a5f !important;

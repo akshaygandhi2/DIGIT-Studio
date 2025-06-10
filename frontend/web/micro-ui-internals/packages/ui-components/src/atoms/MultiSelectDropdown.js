@@ -721,9 +721,9 @@ const MultiSelectDropdown = ({
             className="digit-multiselectdropdown-label"
             title={
               alreadyQueuedSelectedState.length > 0
-                ? `${variant === "treemultiselect" 
-                    ? countFinalChildOptions(alreadyQueuedSelectedState) 
-                    : alreadyQueuedSelectedState.length} 
+                ? `${variant === "treemultiselect"
+                    ? countFinalChildOptions(alreadyQueuedSelectedState)
+                    : alreadyQueuedSelectedState.length}
                    ${defaultUnit} Selected`
                 : defaultLabel
             }
@@ -783,11 +783,7 @@ const MultiSelectDropdown = ({
                 return (
                   <Chip
                     key={index}
-                    text={
-                      replacedText?.length > 64
-                        ? `${replacedText.slice(0, 64)}...`
-                        : replacedText
-                    }
+                    text={replacedText}
                     onClick={
                       variant === "treemultiselect"
                         ? () => onSelectToAddToQueue([value])
@@ -799,6 +795,7 @@ const MultiSelectDropdown = ({
                     }
                     hideClose={isClose}
                     className="multiselectdropdown-tag"
+                    t={t}
                   />
                 );
               })}

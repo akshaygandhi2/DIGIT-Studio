@@ -227,9 +227,9 @@ export const generateViewConfigFromResponse = (application, t, currentBusinessSe
     }
   };
 
-  const serviceDetails = application.serviceDetails || {};
-  const addressDetails = application.address || {};
-  const applicants = application.applicants || [];
+  const serviceDetails = application?.serviceDetails || {};
+  const addressDetails = application?.address || {};
+  const applicants = application?.applicants || [];
 
   const cards = [];
 
@@ -340,8 +340,8 @@ export const generateViewConfigFromResponse = (application, t, currentBusinessSe
       {
         type: "WFHISTORY",
         businessService: currentBusinessService || serviceConfig?.data?.workflow?.businessService,
-        applicationNo: application.applicationNumber,
-        tenantId: application.tenantId,
+        applicationNo: application?.applicationNumber,
+        tenantId: application?.tenantId,
         timelineStatusPrefix: `WF_${application?.module?.toUpperCase()}_${application?.businessService?.toUpperCase()}`,
         breakLineRequired: false,
         config: {
@@ -366,7 +366,7 @@ export const generateViewConfigFromResponse = (application, t, currentBusinessSe
   const config = {
     cards,
     apiResponse: application,
-    additionalDetails: application.additionalDetails || {},
+    additionalDetails: application?.additionalDetails || {},
     horizontalNav: {
       showNav: false,
       configNavItems: [],
