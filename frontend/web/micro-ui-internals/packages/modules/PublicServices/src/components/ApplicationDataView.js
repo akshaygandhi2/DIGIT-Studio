@@ -56,9 +56,15 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
         legalName: data.name,
         address: additionalDetails?.applicants?.address || "-",
         wayToAddress: additionalDetails?.applicants?.wayToAddress || "-",
-        telephone: data.mobileNumber,
+        telephone: `+253 ${data?.mobileNumber}`,
       };
     }
+
+      if (sectionTitle === "BPA_BPA_PCO_DESIGNOFFICEDETAILING") {
+        displayData = {
+          telephone: `+253 ${data?.telephone}`,
+        };
+      }
 
     return (
       <div className="section-container">
@@ -182,12 +188,12 @@ const ApplicationDataView = ({serviceCode, data, status, applicationNumber, busi
 
     return (
       <div className="section-container">
-        <h2 className="section-title">{t("DOCUMENTS")}</h2>
+        <h2 className="field-label">{t("DOCUMENTS")}</h2>
         <div className="section-content">
           {documents.map((doc, index) => (
             <div key={index} className="fields-container">
               <div className="field-label" style={{ width: "65%", fontSize: "16px", fontWeight: "500" }}>
-                {doc.documentType}
+                {t(doc?.documentType)}
               </div>
               <div className="field-value">
                 <div className="document-item">

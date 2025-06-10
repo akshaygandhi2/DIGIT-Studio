@@ -40,7 +40,7 @@ const Chip = ({
       >
         {iconReq && IconRender(iconReq, isErrorTag)}
         <span className="digit-text" style={textStyles}>
-          {t(text)}_{index}
+          {t(text)?.length > 64 ? `${t(text)?.slice(0, 64)} ...` : t(text)}_{index}
         </span>
         {!hideClose && (
           <span onClick={disabled ? null : onClick} className={`close-icon ${disabled ? "disabled" : ""} ${hideClose ? "hideClose" : ""}`}>

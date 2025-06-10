@@ -783,11 +783,7 @@ const MultiSelectDropdown = ({
                 return (
                   <Chip
                     key={index}
-                    text={
-                      replacedText?.length > 64
-                        ? `${replacedText.slice(0, 64)}...`
-                        : replacedText
-                    }
+                    text={replacedText}
                     onClick={
                       variant === "treemultiselect"
                         ? () => onSelectToAddToQueue([value])
