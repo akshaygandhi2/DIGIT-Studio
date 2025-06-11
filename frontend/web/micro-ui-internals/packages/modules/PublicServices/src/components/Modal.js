@@ -150,6 +150,7 @@ const Modal = ({
           color: #00796B;
           cursor: pointer;
           word-break: break-word;
+          border-radius: 10px;
           ${style}
         }
 
@@ -168,6 +169,7 @@ const Modal = ({
           color: #fff;
           cursor: pointer;
           word-break: break-word;
+          border-radius: 10px;
           ${style}
         }
 
