@@ -450,10 +450,8 @@ const DigitDemoViewComponent = () => {
                             fontFamily: "Inter",
                           }}
                         >
-                          <strong
+                          <p
                             style={{
-                              display: "block",
-                              marginBottom: "0.25rem",
                               marginTop: "5px",
                               color: "black",
                               fontFamily: "Inter",
@@ -462,7 +460,7 @@ const DigitDemoViewComponent = () => {
                             }}
                           >
                             {t("COMMENT")}
-                          </strong>
+                          </p>
                           "{instance?.comment}"
                         </div>
                       )}
